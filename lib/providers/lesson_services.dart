@@ -3,8 +3,8 @@ import 'dart:io';
 
 import 'package:http/http.dart' as http;
 
-import '../models/lesson_category.dart';
 import '../models/api_response.dart';
+import '../models/lesson.dart';
 import './user_services.dart';
 import './constants.dart';
 
@@ -13,17 +13,19 @@ Future<ApiResponse> getCourses(String catName) async {
   ApiResponse apiResponse = ApiResponse();
   try {
     final token = await getToken();
+
     final response = await http.get(
       Uri.parse(baseURL + '/category/$catName'),
-      headers: {'Accept': 'application/json', 'Authorization': 'Bearer $token'},
+      headers: {
+        'Accept': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
     );
     switch (response.statusCode) {
       case 200:
         apiResponse.data = jsonDecode(response.body)['courses']
-            .map(
-              (course) => LessonCategory.fromJson(course),
-            )
-            .toString() as List<dynamic>;
+            .map((lesson) => Lesson.fromJson(lesson))
+            .toList() as List<dynamic>;
         break;
       case 401:
         apiResponse.errors = unauthorized;
@@ -38,14 +40,17 @@ Future<ApiResponse> getCourses(String catName) async {
   return apiResponse;
 }
 
-// all course details
+// all course's details
 Future<ApiResponse> getCourseDetails(String catName, String lesName) async {
   ApiResponse apiResponse = ApiResponse();
   try {
     final token = await getToken();
     final response = await http.get(
       Uri.parse(baseURL + '/category/$catName/course/$lesName'),
-      headers: {'Accept': 'application/json', 'Authorization': 'Bearer $token'},
+      headers: {
+        'Accept': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
     );
     switch (response.statusCode) {
       case 200:

@@ -1,13 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 import '../providers/constants.dart';
-import '../routes/category_details.dart';
+import '../routes/category_details_screen.dart';
 
 class CategoryItem extends StatelessWidget {
   final int? catId;
   final String? catName;
   final String? catImg;
   final String? catDescription;
+  final String? createdAt;
 
   const CategoryItem({
     super.key,
@@ -15,26 +17,26 @@ class CategoryItem extends StatelessWidget {
     required this.catName,
     required this.catImg,
     required this.catDescription,
+    required this.createdAt,
   });
   void selectCategory(BuildContext context) {
     Navigator.of(context).pushNamed(
       CategoryDetailsScreen.routeName,
-      arguments: {
-        // 'id': id,
-        // 'catColor': catColor,
-      },
+      arguments: {'catName': catName, 'catImg': catImg},
     );
   }
 
   @override
   Widget build(BuildContext context) {
     return InkWell(
+      borderRadius: BorderRadius.circular(15),
+      splashColor: Colors.blue,
       onTap: () => selectCategory(context),
       child: Card(
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(13),
+          borderRadius: BorderRadius.circular(15),
         ),
-        elevation: 5,
+        elevation: 8,
         margin: const EdgeInsets.all(10),
         child: Column(
           children: <Widget>[
@@ -42,11 +44,15 @@ class CategoryItem extends StatelessWidget {
               children: <Widget>[
                 ClipRRect(
                   borderRadius: const BorderRadius.only(
-                    topLeft: Radius.circular(13),
-                    topRight: Radius.circular(13),
+                    topLeft: Radius.circular(15),
+                    topRight: Radius.circular(15),
                   ),
-                  child: Image.network('${assetsURL}/storage/${catImg!}',
-                      height: 250, width: double.infinity, fit: BoxFit.cover),
+                  child: Image.network(
+                    '${assetsURL}/storage/${catImg!}',
+                    height: 250,
+                    width: double.infinity,
+                    fit: BoxFit.cover,
+                  ),
                 ),
                 Positioned(
                   top: 40,
@@ -58,10 +64,12 @@ class CategoryItem extends StatelessWidget {
                           const Color.fromRGBO(90, 90, 243, 0.7607843137254902),
                     ),
                     width: 300,
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 20,
+                      vertical: 5,
+                    ),
                     child: Text(
-                      catName!,
+                      catName!.toUpperCase(),
                       style: const TextStyle(
                           fontSize: 30,
                           color: Colors.white,
@@ -104,13 +112,17 @@ class CategoryItem extends StatelessWidget {
                     width: 300,
                     padding:
                         const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
-                    child: const Text(
-                      'created at : --:--',
-                      style: TextStyle(
-                          fontSize: 17,
-                          color:
-                              Color.fromRGBO(90, 90, 243, 0.7607843137254902),
-                          fontWeight: FontWeight.bold),
+                    child: Text(
+                      'Created at : ${DateFormat.yMMMd().format(
+                        DateFormat("yyyy-MM-dd'T'H:mm:ss.SSS'Z'").parse(
+                          createdAt.toString(),
+                        ),
+                      )}',
+                      style: const TextStyle(
+                        fontSize: 17,
+                        color: Color.fromRGBO(90, 90, 243, 0.7607843137254902),
+                        fontWeight: FontWeight.bold,
+                      ),
                       softWrap: true,
                       overflow: TextOverflow.fade,
                     ),

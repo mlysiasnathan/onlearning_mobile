@@ -1,30 +1,33 @@
 import 'package:flutter/material.dart';
 
-import '../providers/categories_services.dart';
-import '../providers/constants.dart';
-import '../providers/user_services.dart';
 import '../models/api_response.dart';
-import '../widgets/category_item.dart';
+import '../providers/constants.dart';
+import '../providers/lesson_services.dart';
+import '../providers/user_services.dart';
 import '../widgets/custom_app_bar.dart';
 import '../widgets/custom_app_drawer.dart';
-import './auth_screen.dart';
+import '../widgets/lesson_item.dart';
+import 'auth_screen.dart';
 
-class CategoriesScreen extends StatefulWidget {
-  const CategoriesScreen({Key? key}) : super(key: key);
-  static const routeName = '/categories';
+class LessonScreen extends StatefulWidget {
+  const LessonScreen({Key? key}) : super(key: key);
+  static const routeName = '/lesson';
 
   @override
-  State<CategoriesScreen> createState() => _CategoriesScreenState();
+  State<LessonScreen> createState() => _LessonScreenState();
 }
 
-class _CategoriesScreenState extends State<CategoriesScreen> {
-  List<dynamic> categories = [];
+class _LessonScreenState extends State<LessonScreen> {
+  List<dynamic> lessonData = [];
   bool _isLoading = true;
-  Future<void> retrieveCategories() async {
-    ApiResponse response = await getAllCategories();
+  bool isLoaded = false;
+
+  Future<void> retrieveCourseAttachments(String catName, String lesName) async {
+    ApiResponse response = await getCourseDetails(catName, lesName);
     if (response.errors == null) {
       setState(() {
-        categories = response.data as List<dynamic>;
+        lessonData = response.data as List<dynamic>;
+        print(lessonData);
         _isLoading = !_isLoading;
       });
     } else if (response.errors == unauthorized) {
@@ -40,6 +43,7 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
+          dismissDirection: DismissDirection.up,
           backgroundColor: Colors.red,
           content: Text('${response.errors}'),
         ),
@@ -48,19 +52,24 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
   }
 
   @override
-  void initState() {
-    retrieveCategories();
-    super.initState();
-  }
-
-  @override
   Widget build(BuildContext context) {
+    final lesInfo =
+        ModalRoute.of(context)?.settings.arguments as Map<String, String?>;
+    final catName = lesInfo['catName'];
+    final lesName = lesInfo['lesName'];
+    final lesImg = lesInfo['lesImg'];
+    if (!isLoaded) {
+      retrieveCourseAttachments(catName!, lesName!);
+      isLoaded = true;
+    }
+    // retrieveCourses(catName);
     return Scaffold(
       floatingActionButton: FloatingActionButton(
         backgroundColor: const Color.fromRGBO(90, 90, 243, 1),
         onPressed: () {
-          retrieveCategories();
           setState(() {
+            // retrieveCourses(catName);
+            isLoaded = false;
             _isLoading = !_isLoading;
           });
         },
@@ -69,34 +78,35 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
       endDrawer: const CustomDrawer(),
       body: CustomScrollView(
         slivers: <Widget>[
-          const CustomAppBar(
-            title: 'Categories',
-          ),
+          CustomAppBar(
+              title: 'Lesson ${lesName!.toUpperCase()}', image: lesImg),
           _isLoading
               ? const SliverFillRemaining(
                   child: Center(
                     child: CircularProgressIndicator(),
                   ),
                 )
-              : categories.isEmpty
+              : lessonData.isEmpty
                   ? const SliverFillRemaining(
                       child: Center(
                         child: Text(
-                          'Category not yet published',
+                          'Course not yet published',
                           style: TextStyle(fontSize: 24),
                         ),
                       ),
                     )
                   : SliverList(
                       delegate: SliverChildBuilderDelegate(
-                        (context, index) => CategoryItem(
-                          catId: categories[index].catId,
-                          catName: categories[index].catName,
-                          catImg: categories[index].catImg,
-                          catDescription: categories[index].catDescription,
-                          createdAt: categories[index].createdAt,
+                        (context, index) => LessonItem(
+                          lesId: lessonData[index].lesId,
+                          lesName: lessonData[index].lesName,
+                          lesImg: lessonData[index].lesImg,
+                          lesContent: lessonData[index].lesContent,
+                          lesPrice: lessonData[index].lesPrice,
+                          createdAt: lessonData[index].createdAt,
+                          catName: catName,
                         ),
-                        childCount: categories.length,
+                        childCount: lessonData.length,
                       ),
                     ),
         ],

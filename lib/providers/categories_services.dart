@@ -34,7 +34,6 @@ Future<ApiResponse> getAllCategories() async {
   } catch (error) {
     apiResponse.errors = serverError;
   }
-  // print(apiResponse.data);
   return apiResponse;
 }
 

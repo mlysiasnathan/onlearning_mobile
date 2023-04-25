@@ -1,3 +1,5 @@
+import 'package:app/routes/categories_screen.dart';
+import 'package:app/routes/category_details_screen.dart';
 import 'package:flutter/material.dart';
 // import 'package:provider/provider.dart';
 //
@@ -25,7 +27,18 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: SplashScreen(),
+      theme: ThemeData(
+        primarySwatch: Colors.indigo,
+        fontFamily: 'Comfortaa',
+        // textTheme: ThemeData.light().textTheme.copyWith(
+        //       titleLarge: const TextStyle(fontSize: 18),
+        //     ),
+      ),
+      home: const SplashScreen(),
+      routes: {
+        CategoriesScreen.routeName: (ctx) => const CategoriesScreen(),
+        CategoryDetailsScreen.routeName: (ctx) => const CategoryDetailsScreen(),
+      },
     );
     //provider=======================================================
     //   MultiProvider(

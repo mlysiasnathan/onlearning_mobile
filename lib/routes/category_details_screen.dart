@@ -1,30 +1,32 @@
+import 'package:app/providers/lesson_services.dart';
 import 'package:flutter/material.dart';
 
-import '../providers/categories_services.dart';
-import '../providers/constants.dart';
-import '../providers/user_services.dart';
 import '../models/api_response.dart';
-import '../widgets/category_item.dart';
+import '../providers/user_services.dart';
 import '../widgets/custom_app_bar.dart';
 import '../widgets/custom_app_drawer.dart';
+import '../providers/constants.dart';
+import '../widgets/lesson_item.dart';
 import './auth_screen.dart';
 
-class CategoriesScreen extends StatefulWidget {
-  const CategoriesScreen({Key? key}) : super(key: key);
-  static const routeName = '/categories';
+class CategoryDetailsScreen extends StatefulWidget {
+  const CategoryDetailsScreen({Key? key}) : super(key: key);
+  static const routeName = '/category-details';
 
   @override
-  State<CategoriesScreen> createState() => _CategoriesScreenState();
+  State<CategoryDetailsScreen> createState() => _CategoryDetailsScreenState();
 }
 
-class _CategoriesScreenState extends State<CategoriesScreen> {
-  List<dynamic> categories = [];
+class _CategoryDetailsScreenState extends State<CategoryDetailsScreen> {
+  List<dynamic> courses = [];
   bool _isLoading = true;
-  Future<void> retrieveCategories() async {
-    ApiResponse response = await getAllCategories();
+  bool isLoaded = false;
+
+  Future<void> retrieveCourses(String catName) async {
+    ApiResponse response = await getCourses(catName);
     if (response.errors == null) {
       setState(() {
-        categories = response.data as List<dynamic>;
+        courses = response.data as List<dynamic>;
         _isLoading = !_isLoading;
       });
     } else if (response.errors == unauthorized) {
@@ -40,6 +42,7 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
+          dismissDirection: DismissDirection.up,
           backgroundColor: Colors.red,
           content: Text('${response.errors}'),
         ),
@@ -48,19 +51,23 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
   }
 
   @override
-  void initState() {
-    retrieveCategories();
-    super.initState();
-  }
-
-  @override
   Widget build(BuildContext context) {
+    final catInfo =
+        ModalRoute.of(context)?.settings.arguments as Map<String, String?>;
+    final catName = catInfo['catName'];
+    final catImg = catInfo['catImg'];
+    if (!isLoaded) {
+      retrieveCourses(catName!);
+      isLoaded = true;
+    }
+    // retrieveCourses(catName);
     return Scaffold(
       floatingActionButton: FloatingActionButton(
         backgroundColor: const Color.fromRGBO(90, 90, 243, 1),
         onPressed: () {
-          retrieveCategories();
           setState(() {
+            // retrieveCourses(catName);
+            isLoaded = false;
             _isLoading = !_isLoading;
           });
         },
@@ -69,34 +76,35 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
       endDrawer: const CustomDrawer(),
       body: CustomScrollView(
         slivers: <Widget>[
-          const CustomAppBar(
-            title: 'Categories',
-          ),
+          CustomAppBar(
+              title: 'Category ${catName!.toUpperCase()}', image: catImg),
           _isLoading
               ? const SliverFillRemaining(
                   child: Center(
                     child: CircularProgressIndicator(),
                   ),
                 )
-              : categories.isEmpty
+              : courses.isEmpty
                   ? const SliverFillRemaining(
                       child: Center(
                         child: Text(
-                          'Category not yet published',
+                          'Course not yet published',
                           style: TextStyle(fontSize: 24),
                         ),
                       ),
                     )
                   : SliverList(
                       delegate: SliverChildBuilderDelegate(
-                        (context, index) => CategoryItem(
-                          catId: categories[index].catId,
-                          catName: categories[index].catName,
-                          catImg: categories[index].catImg,
-                          catDescription: categories[index].catDescription,
-                          createdAt: categories[index].createdAt,
+                        (context, index) => LessonItem(
+                          lesId: courses[index].lesId,
+                          lesName: courses[index].lesName,
+                          lesImg: courses[index].lesImg,
+                          lesContent: courses[index].lesContent,
+                          lesPrice: courses[index].lesPrice,
+                          createdAt: courses[index].createdAt,
+                          catName: catName,
                         ),
-                        childCount: categories.length,
+                        childCount: courses.length,
                       ),
                     ),
         ],
