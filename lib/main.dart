@@ -16,6 +16,7 @@ import './routes/categories_screen.dart';
 import './routes/category_details_screen.dart';
 import './routes/lesson_screen.dart';
 import './routes/splash_screen.dart';
+import './routes/document_viewer_screen.dart';
 
 void main() {
   runApp(const MyApp());
@@ -40,6 +41,7 @@ class MyApp extends StatelessWidget {
         CategoriesScreen.routeName: (ctx) => const CategoriesScreen(),
         CategoryDetailsScreen.routeName: (ctx) => const CategoryDetailsScreen(),
         LessonScreen.routeName: (ctx) => const LessonScreen(),
+        DocumentViewerScreen.routeName: (ctx) => const DocumentViewerScreen(),
       },
     );
     //provider=======================================================

@@ -1,5 +1,7 @@
 // import 'dart:html';
 
+import 'dart:math';
+
 import 'package:app/models/api_response.dart';
 import 'package:app/providers/user_services.dart';
 import 'package:app/routes/auth_screen.dart';
@@ -48,8 +50,6 @@ class _SplashScreenState extends State<SplashScreen> {
     } else {
       ApiResponse response = await gerUserDetail();
       if (response.errors == null) {
-        var user = response.data as User;
-        print(user.userName);
         Navigator.of(context).pushAndRemoveUntil(
             MaterialPageRoute(builder: (context) => const CategoriesScreen()),
             (route) => false);
@@ -80,15 +80,41 @@ class _SplashScreenState extends State<SplashScreen> {
       body: Container(
         color: const Color.fromRGBO(90, 90, 243, 1),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
+          crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: const [
-            Icon(
+          children: [
+            const Icon(
               Icons.menu_book_sharp,
               size: 70,
               color: Colors.white,
             ),
-            Center(
+            Container(
+              // margin: const EdgeInsets.only(bottom: 10.0),
+              padding:
+                  const EdgeInsets.symmetric(vertical: 8.0, horizontal: 80.0),
+              transform: Matrix4.rotationZ(-8 * pi / 180)..translate(-10.0),
+              // ..translate(-10.0),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(20),
+                color: Colors.white,
+                boxShadow: const [
+                  BoxShadow(
+                    blurRadius: 8,
+                    color: Colors.black26,
+                    offset: Offset(0, 2),
+                  )
+                ],
+              ),
+              child: const Text(
+                'Onlearning',
+                style: TextStyle(
+                  fontSize: 35,
+                  color: const Color.fromRGBO(90, 90, 243, 1),
+                  fontWeight: FontWeight.normal,
+                ),
+              ),
+            ),
+            const Center(
               child: CircularProgressIndicator(color: Colors.white),
             ),
           ],

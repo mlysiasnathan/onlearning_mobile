@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:app/routes/document_viewer_screen.dart';
 import 'package:flutter/material.dart';
 
 import '../models/api_response.dart';
@@ -126,7 +127,13 @@ class _LessonScreenState extends State<LessonScreen> {
                             itemBuilder: (context, index) => Padding(
                               padding: const EdgeInsets.all(4.0),
                               child: OutlinedButton(
-                                onPressed: () {},
+                                onPressed: () {
+                                  Navigator.of(context).pushNamed(
+                                    DocumentViewerScreen.routeName,
+                                    arguments:
+                                        '$assetsURL/storage/${documents[index].pdfFile}',
+                                  );
+                                },
                                 child: Row(
                                   children: [
                                     const Icon(Icons.my_library_books_outlined),

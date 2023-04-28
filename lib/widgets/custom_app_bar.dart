@@ -44,7 +44,7 @@ class CustomAppBar extends StatelessWidget {
                 fit: BoxFit.cover,
               )
             : Image.network(
-                '${assetsURL}/storage/${image}',
+                '$assetsURL/storage/${image}',
                 fit: BoxFit.cover,
               ),
       ),
