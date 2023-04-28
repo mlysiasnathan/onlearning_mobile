@@ -1,12 +1,15 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 
 import '../models/api_response.dart';
+import '../models/document.dart';
+import '../models/video.dart';
 import '../providers/constants.dart';
 import '../providers/lesson_services.dart';
 import '../providers/user_services.dart';
 import '../widgets/custom_app_bar.dart';
 import '../widgets/custom_app_drawer.dart';
-import '../widgets/lesson_item.dart';
 import 'auth_screen.dart';
 
 class LessonScreen extends StatefulWidget {
@@ -18,7 +21,10 @@ class LessonScreen extends StatefulWidget {
 }
 
 class _LessonScreenState extends State<LessonScreen> {
-  List<dynamic> lessonData = [];
+  Map<String, dynamic> lessonData = {};
+  // List<dynamic> course = [];
+  List<dynamic> videos = [];
+  List<dynamic> documents = [];
   bool _isLoading = true;
   bool isLoaded = false;
 
@@ -26,8 +32,14 @@ class _LessonScreenState extends State<LessonScreen> {
     ApiResponse response = await getCourseDetails(catName, lesName);
     if (response.errors == null) {
       setState(() {
-        lessonData = response.data as List<dynamic>;
-        print(lessonData);
+        lessonData = response.data as Map<String, dynamic>;
+        videos = lessonData['videos']
+            .map((video) => Video.fromJson(video))
+            .toList() as List<dynamic>;
+        documents = lessonData['documents']
+            .map((document) => Document.fromJson(document))
+            .toList() as List<dynamic>;
+        // course = lessonData['course'] as List<dynamic>;
         _isLoading = !_isLoading;
       });
     } else if (response.errors == unauthorized) {
@@ -86,29 +98,88 @@ class _LessonScreenState extends State<LessonScreen> {
                     child: CircularProgressIndicator(),
                   ),
                 )
-              : lessonData.isEmpty
-                  ? const SliverFillRemaining(
-                      child: Center(
-                        child: Text(
-                          'Course not yet published',
-                          style: TextStyle(fontSize: 24),
-                        ),
-                      ),
-                    )
-                  : SliverList(
-                      delegate: SliverChildBuilderDelegate(
-                        (context, index) => LessonItem(
-                          lesId: lessonData[index].lesId,
-                          lesName: lessonData[index].lesName,
-                          lesImg: lessonData[index].lesImg,
-                          lesContent: lessonData[index].lesContent,
-                          lesPrice: lessonData[index].lesPrice,
-                          createdAt: lessonData[index].createdAt,
-                          catName: catName,
-                        ),
-                        childCount: lessonData.length,
-                      ),
-                    ),
+              : SliverFillRemaining(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: [
+                      documents.isEmpty
+                          ? const Text(
+                              'Document not yet published',
+                              style: TextStyle(fontSize: 24),
+                            )
+                          : const Padding(
+                              padding: EdgeInsets.all(8.0),
+                              child: Text(
+                                'Documents to download',
+                                style: TextStyle(fontSize: 24),
+                              ),
+                            ),
+                      documents.isEmpty
+                          ? const SizedBox()
+                          : SizedBox(
+                              // height: 60,
+                              height: min(documents.length * 19.0 + 10, 100),
+                              child: ListView.builder(
+                                scrollDirection: Axis.horizontal,
+                                padding: const EdgeInsets.all(10),
+                                // physics: const NeverScrollableScrollPhysics(),
+                                itemCount: documents.length,
+                                itemBuilder: (context, index) => Padding(
+                                  padding: const EdgeInsets.all(4.0),
+                                  child: OutlinedButton(
+                                    onPressed: () {},
+                                    child: Row(
+                                      children: [
+                                        const Icon(
+                                            Icons.my_library_books_outlined),
+                                        Text('${documents[index].pdfId}'),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+
+                      //=====
+                      videos.isEmpty
+                          ? const Text(
+                              'Video not yet published',
+                              style: TextStyle(fontSize: 24),
+                            )
+                          : const Padding(
+                              padding: EdgeInsets.all(8.0),
+                              child: Text(
+                                'Table of contents & Videos',
+                                style: TextStyle(fontSize: 24),
+                              ),
+                            ),
+                      videos.isEmpty
+                          ? const SizedBox()
+                          : SizedBox(
+                              height: 400,
+                              // height: min(videos.length * 19.0 + 10, 100),
+                              child: ListView.builder(
+                                padding: const EdgeInsets.all(10),
+                                physics: const NeverScrollableScrollPhysics(),
+                                itemCount: videos.length,
+                                itemBuilder: (context, index) => Padding(
+                                  padding: const EdgeInsets.all(4.0),
+                                  child: OutlinedButton(
+                                    onPressed: () {},
+                                    child: Row(
+                                      children: [
+                                        const Icon(Icons.video_call),
+                                        Text('${videos[index].vidName}'),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            )
+                    ],
+                  ),
+                ),
         ],
       ),
     );

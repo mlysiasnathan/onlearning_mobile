@@ -1,5 +1,6 @@
 import 'package:app/routes/categories_screen.dart';
 import 'package:app/routes/category_details_screen.dart';
+import 'package:app/routes/lesson_screen.dart';
 import 'package:flutter/material.dart';
 // import 'package:provider/provider.dart';
 //
@@ -38,6 +39,7 @@ class MyApp extends StatelessWidget {
       routes: {
         CategoriesScreen.routeName: (ctx) => const CategoriesScreen(),
         CategoryDetailsScreen.routeName: (ctx) => const CategoryDetailsScreen(),
+        LessonScreen.routeName: (ctx) => const LessonScreen(),
       },
     );
     //provider=======================================================
