@@ -1,6 +1,3 @@
-import 'package:app/routes/categories_screen.dart';
-import 'package:app/routes/category_details_screen.dart';
-import 'package:app/routes/lesson_screen.dart';
 import 'package:flutter/material.dart';
 // import 'package:provider/provider.dart';
 //
@@ -15,6 +12,9 @@ import 'package:flutter/material.dart';
 // import './routes/edit_product_screen.dart';
 // import './routes/cart_screen.dart';
 // import './routes/auth_screen.dart';
+import './routes/categories_screen.dart';
+import './routes/category_details_screen.dart';
+import './routes/lesson_screen.dart';
 import './routes/splash_screen.dart';
 
 void main() {

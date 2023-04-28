@@ -7,6 +7,8 @@ import '../providers/constants.dart';
 import '../models/api_response.dart';
 import '../models/user.dart';
 
+late User user;
+
 Future<ApiResponse> login(String email, String password) async {
   ApiResponse apiResponse = ApiResponse();
   try {
@@ -21,6 +23,7 @@ Future<ApiResponse> login(String email, String password) async {
     switch (response.statusCode) {
       case 200:
         apiResponse.data = User.fromJson(jsonDecode(response.body));
+        user = apiResponse.data as User;
         break;
       case 422:
         final errors = jsonDecode(response.body)['errors'];
@@ -56,6 +59,7 @@ Future<ApiResponse> register(
     switch (response.statusCode) {
       case 200:
         apiResponse.data = User.fromJson(jsonDecode(response.body));
+        user = apiResponse.data as User;
         break;
       case 422:
         final errors = jsonDecode(response.body)['errors'];
@@ -82,6 +86,7 @@ Future<ApiResponse> gerUserDetail() async {
     switch (response.statusCode) {
       case 200:
         apiResponse.data = User.fromJson(jsonDecode(response.body));
+        user = apiResponse.data as User;
         break;
       case 401:
         apiResponse.errors = unauthorized;

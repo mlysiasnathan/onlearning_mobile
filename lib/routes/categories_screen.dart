@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 
+import '../models/api_response.dart';
 import '../providers/categories_services.dart';
 import '../providers/constants.dart';
 import '../providers/user_services.dart';
-import '../models/api_response.dart';
 import '../widgets/category_item.dart';
 import '../widgets/custom_app_bar.dart';
 import '../widgets/custom_app_drawer.dart';

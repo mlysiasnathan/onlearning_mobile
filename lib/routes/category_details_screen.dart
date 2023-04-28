@@ -1,11 +1,11 @@
-import 'package:app/providers/lesson_services.dart';
 import 'package:flutter/material.dart';
 
 import '../models/api_response.dart';
 import '../providers/user_services.dart';
+import '../providers/lesson_services.dart';
+import '../providers/constants.dart';
 import '../widgets/custom_app_bar.dart';
 import '../widgets/custom_app_drawer.dart';
-import '../providers/constants.dart';
 import '../widgets/lesson_item.dart';
 import './auth_screen.dart';
 

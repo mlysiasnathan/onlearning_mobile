@@ -16,37 +16,49 @@ class _VideoItemState extends State<VideoItem> {
   Widget build(BuildContext context) {
     return Card(
       margin: const EdgeInsets.all(10),
-      child: Column(children: [
-        InkWell(
-          onTap: () {
-            setState(() {
-              _expanded = !_expanded;
-            });
-          },
-          child: ListTile(
-            title: Text(widget.vidName),
-            subtitle: Text(widget.vidFile),
-            trailing: Icon(_expanded ? Icons.expand_less : Icons.expand_more),
-          ),
-        ),
-        if (_expanded)
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 4),
-            // height: min(widget.orders.products.length * 19.0 + 10, 100),
-            height: 300,
-            child: Center(
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(15),
-                child: Image.asset(
-                  'assets/images/line.jpg',
-                  height: 300,
-                  width: 450,
-                  fit: BoxFit.cover,
-                ),
+      child: Column(
+        children: [
+          InkWell(
+            onTap: () {
+              setState(() {
+                _expanded = !_expanded;
+              });
+            },
+            child: Container(
+              height: 60,
+              decoration:
+                  BoxDecoration(borderRadius: BorderRadius.circular(30)),
+              padding: const EdgeInsets.all(13.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const Icon(Icons.play_circle_outline),
+                  Text(widget.vidName),
+                  Icon(_expanded ? Icons.expand_more : Icons.chevron_right),
+                ],
               ),
             ),
-          )
-      ]),
+          ),
+          if (_expanded)
+            Container(
+              decoration:
+                  BoxDecoration(borderRadius: BorderRadius.circular(30)),
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+              height: 220,
+              child: Center(
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(15),
+                  child: Image.asset(
+                    'assets/images/line.jpg',
+                    height: 200,
+                    width: 450,
+                    fit: BoxFit.cover,
+                  ),
+                ),
+              ),
+            )
+        ],
+      ),
     );
   }
 }

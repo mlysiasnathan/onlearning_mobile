@@ -7,6 +7,7 @@ import 'package:app/routes/categories_screen.dart';
 // import 'package:app/routes/products_overview_screen.dart';
 import 'package:flutter/material.dart';
 
+import '../models/user.dart';
 import '../providers/constants.dart';
 
 // class SplashScreen extends StatelessWidget {
@@ -47,12 +48,12 @@ class _SplashScreenState extends State<SplashScreen> {
     } else {
       ApiResponse response = await gerUserDetail();
       if (response.errors == null) {
-        print('logged in ');
+        var user = response.data as User;
+        print(user.userName);
         Navigator.of(context).pushAndRemoveUntil(
             MaterialPageRoute(builder: (context) => const CategoriesScreen()),
             (route) => false);
       } else if (response.errors == unauthorized) {
-        print('login before');
         Navigator.of(context).pushAndRemoveUntil(
             MaterialPageRoute(builder: (context) => const AuthScreen()),
             (route) => false);

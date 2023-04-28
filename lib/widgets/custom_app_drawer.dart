@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../providers/constants.dart';
 import '../providers/user_services.dart';
 import '../routes/auth_screen.dart';
 
@@ -11,12 +12,17 @@ class CustomDrawer extends StatelessWidget {
     return Drawer(
       child: ListView(
         children: <Widget>[
-          const UserAccountsDrawerHeader(
-            accountName: Text('User Name'),
-            accountEmail: Text('user.name@email.com'),
+          UserAccountsDrawerHeader(
+            decoration:
+                const BoxDecoration(color: Color.fromRGBO(90, 90, 243, 1)),
+            accountName: Text('${user.userName}'),
+            accountEmail: Text('${user.userEmail}'),
             currentAccountPicture: CircleAvatar(
+              backgroundImage: Image.network(
+                '${assetsURL}/storage/${user.image!}',
+                fit: BoxFit.cover,
+              ).image,
               backgroundColor: Colors.white,
-              child: FlutterLogo(size: 42.0),
             ),
           ),
           ListTile(

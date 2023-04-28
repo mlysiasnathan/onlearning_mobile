@@ -1,16 +1,22 @@
 import 'package:flutter/material.dart';
 
+import '../routes/lesson_screen.dart';
+
 class LessonGetStarted extends StatelessWidget {
-  const LessonGetStarted({Key? key}) : super(key: key);
+  final String? lesName;
+  final String? lesImg;
+  final String? catName;
+  const LessonGetStarted({
+    Key? key,
+    required this.lesName,
+    required this.lesImg,
+    required this.catName,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return OutlinedButton.icon(
-      style: ButtonStyle(
-        backgroundColor:
-            MaterialStateColor.resolveWith((states) => Colors.white),
-      ),
-      onPressed: () {
+    return InkWell(
+      onTap: () {
         showDialog<void>(
           context: context,
           builder: (ctx) => AlertDialog(
@@ -50,6 +56,14 @@ class LessonGetStarted extends StatelessWidget {
               ElevatedButton(
                 onPressed: () {
                   Navigator.pop(ctx);
+                  Navigator.of(ctx).pushNamed(
+                    LessonScreen.routeName,
+                    arguments: {
+                      'lesName': lesName,
+                      'lesImg': lesImg,
+                      'catName': catName,
+                    },
+                  );
                 },
                 child: const Text(
                   'Start',
@@ -59,8 +73,10 @@ class LessonGetStarted extends StatelessWidget {
           ),
         );
       },
-      icon: const Icon(Icons.expand_more),
-      label: const Text('Get Started'),
+      child: const Padding(
+        padding: EdgeInsets.all(4.0),
+        child: Text('Get Started'),
+      ),
     );
   }
 }

@@ -10,6 +10,7 @@ import '../providers/lesson_services.dart';
 import '../providers/user_services.dart';
 import '../widgets/custom_app_bar.dart';
 import '../widgets/custom_app_drawer.dart';
+import '../widgets/video_item.dart';
 import 'auth_screen.dart';
 
 class LessonScreen extends StatefulWidget {
@@ -74,13 +75,11 @@ class _LessonScreenState extends State<LessonScreen> {
       retrieveCourseAttachments(catName!, lesName!);
       isLoaded = true;
     }
-    // retrieveCourses(catName);
     return Scaffold(
       floatingActionButton: FloatingActionButton(
         backgroundColor: const Color.fromRGBO(90, 90, 243, 1),
         onPressed: () {
           setState(() {
-            // retrieveCourses(catName);
             isLoaded = false;
             _isLoading = !_isLoading;
           });
@@ -115,33 +114,29 @@ class _LessonScreenState extends State<LessonScreen> {
                                 style: TextStyle(fontSize: 24),
                               ),
                             ),
-                      documents.isEmpty
-                          ? const SizedBox()
-                          : SizedBox(
-                              // height: 60,
-                              height: min(documents.length * 19.0 + 10, 100),
-                              child: ListView.builder(
-                                scrollDirection: Axis.horizontal,
-                                padding: const EdgeInsets.all(10),
-                                // physics: const NeverScrollableScrollPhysics(),
-                                itemCount: documents.length,
-                                itemBuilder: (context, index) => Padding(
-                                  padding: const EdgeInsets.all(4.0),
-                                  child: OutlinedButton(
-                                    onPressed: () {},
-                                    child: Row(
-                                      children: [
-                                        const Icon(
-                                            Icons.my_library_books_outlined),
-                                        Text('${documents[index].pdfId}'),
-                                      ],
-                                    ),
-                                  ),
+                      if (documents.isNotEmpty)
+                        SizedBox(
+                          // height: 60,
+                          height: min(documents.length * 19.0 + 10, 100),
+                          child: ListView.builder(
+                            scrollDirection: Axis.horizontal,
+                            padding: const EdgeInsets.all(10),
+                            // physics: const NeverScrollableScrollPhysics(),
+                            itemCount: documents.length,
+                            itemBuilder: (context, index) => Padding(
+                              padding: const EdgeInsets.all(4.0),
+                              child: OutlinedButton(
+                                onPressed: () {},
+                                child: Row(
+                                  children: [
+                                    const Icon(Icons.my_library_books_outlined),
+                                    Text('${documents[index].pdfId}'),
+                                  ],
                                 ),
                               ),
                             ),
-
-                      //=====
+                          ),
+                        ),
                       videos.isEmpty
                           ? const Text(
                               'Video not yet published',
@@ -154,29 +149,19 @@ class _LessonScreenState extends State<LessonScreen> {
                                 style: TextStyle(fontSize: 24),
                               ),
                             ),
-                      videos.isEmpty
-                          ? const SizedBox()
-                          : SizedBox(
-                              height: 400,
-                              // height: min(videos.length * 19.0 + 10, 100),
-                              child: ListView.builder(
-                                padding: const EdgeInsets.all(10),
-                                physics: const NeverScrollableScrollPhysics(),
-                                itemCount: videos.length,
-                                itemBuilder: (context, index) => Padding(
-                                  padding: const EdgeInsets.all(4.0),
-                                  child: OutlinedButton(
-                                    onPressed: () {},
-                                    child: Row(
-                                      children: [
-                                        const Icon(Icons.video_call),
-                                        Text('${videos[index].vidName}'),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            )
+                      if (videos.isNotEmpty)
+                        SizedBox(
+                          height: 400,
+                          // height: min(videos.length * 19.0 + 10, 100),
+                          child: ListView.builder(
+                            padding: const EdgeInsets.all(10),
+                            // physics: const NeverScrollableScrollPhysics(),
+                            itemCount: videos.length,
+                            itemBuilder: (context, index) => VideoItem(
+                                vidName: videos[index].vidName,
+                                vidFile: videos[index].vidFile),
+                          ),
+                        ),
                     ],
                   ),
                 ),
