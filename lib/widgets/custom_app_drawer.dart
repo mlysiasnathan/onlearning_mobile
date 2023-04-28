@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../providers/constants.dart';
 import '../providers/user_services.dart';
 import '../routes/auth_screen.dart';
+import '../routes/edit_profile_screen.dart';
 
 class CustomDrawer extends StatelessWidget {
   const CustomDrawer({super.key});
@@ -26,9 +27,11 @@ class CustomDrawer extends StatelessWidget {
             ),
           ),
           ListTile(
-            title: const Text('Edit profile'),
-            onTap: () {},
-          ),
+              title: const Text('Edit profile'),
+              onTap: () {
+                Navigator.pop(context);
+                Navigator.of(context).pushNamed(EditProfileScreen.routeName);
+              }),
           ListTile(
             title: const Text('Current course'),
             onTap: () {},

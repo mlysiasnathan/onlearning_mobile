@@ -17,6 +17,7 @@ import './routes/category_details_screen.dart';
 import './routes/lesson_screen.dart';
 import './routes/splash_screen.dart';
 import './routes/document_viewer_screen.dart';
+import './routes/edit_profile_screen.dart';
 
 void main() {
   runApp(const MyApp());
@@ -29,6 +30,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       theme: ThemeData(
         primarySwatch: Colors.indigo,
         fontFamily: 'Comfortaa',
@@ -42,6 +44,7 @@ class MyApp extends StatelessWidget {
         CategoryDetailsScreen.routeName: (ctx) => const CategoryDetailsScreen(),
         LessonScreen.routeName: (ctx) => const LessonScreen(),
         DocumentViewerScreen.routeName: (ctx) => const DocumentViewerScreen(),
+        EditProfileScreen.routeName: (ctx) => const EditProfileScreen(),
       },
     );
     //provider=======================================================
