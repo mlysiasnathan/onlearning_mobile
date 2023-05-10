@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
@@ -81,12 +82,61 @@ Future<ApiResponse> gerUserDetail() async {
     final token = await getToken();
     final response = await http.get(
       Uri.parse(userURL),
-      headers: {'Accept': 'application/json', 'Authorization': 'Bearer $token'},
+      headers: {
+        'Accept': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
     );
     switch (response.statusCode) {
       case 200:
         apiResponse.data = User.fromJson(jsonDecode(response.body));
         user = apiResponse.data as User;
+        break;
+      case 401:
+        apiResponse.errors = unauthorized;
+        break;
+      default:
+        apiResponse.errors = somethingWentWrong;
+        break;
+    }
+  } catch (error) {
+    apiResponse.errors = serverError;
+  }
+  return apiResponse;
+}
+
+Future<ApiResponse> updateUserProfile(
+    String userName, String email, String password, File? image) async {
+  ApiResponse apiResponse = ApiResponse();
+  try {
+    final token = await getToken();
+    final response = await http.put(
+      Uri.parse(userURL),
+      headers: {
+        'Accept': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
+      body: {
+        'username_update': userName,
+        'email_update': email,
+        'password_update': password,
+        'password_confirmation_update': password,
+        'profil_img': image,
+      },
+      // image == null
+      //     ? {
+      //         'username_update': userName,
+      //         'email_update': email,
+      //         'password_update': password,
+      //         'password_confirmation_update': password,
+      //       }
+      //     :
+    );
+    switch (response.statusCode) {
+      case 200:
+        user = User.fromJson(jsonDecode(response.body)['user']);
+        // user = apiResponse.data as User;
+        apiResponse.data = jsonDecode(response.body)['message'];
         break;
       case 401:
         apiResponse.errors = unauthorized;

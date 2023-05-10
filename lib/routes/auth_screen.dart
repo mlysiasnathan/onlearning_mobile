@@ -35,8 +35,8 @@ class AuthScreen extends StatelessWidget {
                 colors: [
                   Colors.white,
                   Colors.white,
-                  Colors.blueAccent,
-                  Colors.blueAccent
+                  Color.fromRGBO(90, 90, 243, 1),
+                  Color.fromRGBO(90, 90, 243, 1)
                 ],
                 begin: Alignment.topCenter,
                 end: Alignment.bottomRight,
@@ -74,7 +74,7 @@ class AuthScreen extends StatelessWidget {
                       child: const Text(
                         'Onlearning',
                         style: TextStyle(
-                          fontSize: 35,
+                          fontSize: 30,
                           color: Colors.white,
                           fontWeight: FontWeight.normal,
                         ),

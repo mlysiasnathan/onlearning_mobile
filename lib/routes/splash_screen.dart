@@ -107,9 +107,10 @@ class _SplashScreenState extends State<SplashScreen> {
               ),
               child: const Text(
                 'Onlearning',
+                // style: Theme.of(context).textTheme.bodyLarge,
                 style: TextStyle(
-                  fontSize: 35,
-                  color: const Color.fromRGBO(90, 90, 243, 1),
+                  fontSize: 30,
+                  color: Color.fromRGBO(90, 90, 243, 1),
                   fontWeight: FontWeight.normal,
                 ),
               ),
