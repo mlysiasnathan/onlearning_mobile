@@ -64,7 +64,8 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
             _isLoading = !_isLoading;
           });
         },
-        child: const Icon(Icons.replay_circle_filled_rounded),
+        child:
+            const Icon(Icons.replay_circle_filled_rounded, color: Colors.white),
       ),
       endDrawer: const CustomDrawer(),
       body: CustomScrollView(

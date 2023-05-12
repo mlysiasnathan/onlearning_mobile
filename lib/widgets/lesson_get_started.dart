@@ -45,7 +45,7 @@ class LessonGetStarted extends StatelessWidget {
               ),
             ),
             actions: [
-              TextButton(
+              OutlinedButton(
                 onPressed: () {
                   Navigator.pop(ctx);
                 },

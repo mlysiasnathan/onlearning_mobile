@@ -254,6 +254,7 @@ class _AuthCardState extends State<AuthCard>
             children: <Widget>[
               if (_authMode == AuthMode.Signup)
                 TextFormField(
+                  style: const TextStyle(color: Colors.black),
                   enabled: _authMode == AuthMode.Signup,
                   decoration: const InputDecoration(labelText: 'Names :'),
                   validator: _authMode == AuthMode.Signup
@@ -268,6 +269,8 @@ class _AuthCardState extends State<AuthCard>
                   },
                 ),
               TextFormField(
+                style: const TextStyle(color: Colors.black),
+                initialValue: '@test.com',
                 decoration: const InputDecoration(labelText: 'email address'),
                 keyboardType: TextInputType.emailAddress,
                 validator: (value) {
@@ -281,6 +284,7 @@ class _AuthCardState extends State<AuthCard>
                 },
               ),
               TextFormField(
+                style: const TextStyle(color: Colors.black),
                 decoration: const InputDecoration(labelText: 'Password'),
                 obscureText: true,
                 controller: _passwordController,
@@ -295,6 +299,7 @@ class _AuthCardState extends State<AuthCard>
               ),
               if (_authMode == AuthMode.Signup)
                 TextFormField(
+                  style: const TextStyle(color: Colors.black),
                   enabled: _authMode == AuthMode.Signup,
                   decoration:
                       const InputDecoration(labelText: 'Confirm Password'),
@@ -316,11 +321,11 @@ class _AuthCardState extends State<AuthCard>
               else
                 ElevatedButton(
                   onPressed: _submit,
-                  style: ButtonStyle(
-                    backgroundColor: MaterialStateColor.resolveWith(
-                      (states) => const Color.fromRGBO(90, 90, 243, 1),
-                    ),
-                  ),
+                  // style: ButtonStyle(
+                  //   backgroundColor: MaterialStateColor.resolveWith(
+                  //     (states) => const Color.fromRGBO(90, 90, 243, 1),
+                  //   ),
+                  // ),
                   child: Text(
                       _authMode == AuthMode.Login ? 'Login now' : 'Signup now'),
                 ),

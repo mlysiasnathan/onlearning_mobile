@@ -21,7 +21,7 @@ class EditProfileScreen extends StatefulWidget {
 class _EditProfileScreenState extends State<EditProfileScreen> {
   final GlobalKey<FormState> _formKey = GlobalKey();
   final _passwordController = TextEditingController();
-  late File? _storedImage;
+  File? _storedImage;
   final Map<String, String> _updateData = {
     'user_name_update': '',
     'email_update': '',
@@ -69,15 +69,16 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       _isLoading = true;
     });
     try {
+      print(_updateData);
+      print(_storedImage);
       // Update user
       ApiResponse response = await updateUserProfile(
-        _updateData['user_name_update']!,
-        _updateData['user_name_update']!,
-        _updateData['password']!,
-        _storedImage,
+        _updateData['user_name_update'].toString(),
+        _updateData['email_update'].toString(),
+        _updateData['password'].toString(),
+        _storedImage!,
       );
       if (response.errors == null) {
-        // user = response.data as User;
         _showErrorDialog(response.data.toString());
       } else {
         _showErrorDialog(response.errors.toString());

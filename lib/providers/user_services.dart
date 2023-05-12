@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:async/async.dart';
 
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
@@ -106,37 +107,40 @@ Future<ApiResponse> gerUserDetail() async {
 }
 
 Future<ApiResponse> updateUserProfile(
-    String userName, String email, String password, File? image) async {
+    String userName, String email, String password, File image) async {
   ApiResponse apiResponse = ApiResponse();
   try {
     final token = await getToken();
-    final response = await http.put(
-      Uri.parse(userURL),
-      headers: {
-        'Accept': 'application/json',
-        'Authorization': 'Bearer $token',
-      },
-      body: {
-        'username_update': userName,
-        'email_update': email,
-        'password_update': password,
-        'password_confirmation_update': password,
-        'profil_img': image,
-      },
-      // image == null
-      //     ? {
-      //         'username_update': userName,
-      //         'email_update': email,
-      //         'password_update': password,
-      //         'password_confirmation_update': password,
-      //       }
-      //     :
-    );
+    var stream = http.ByteStream(DelegatingStream.typed(image.openRead()));
+    var length = await image.length();
+    Map<String, String> headers = {
+      'Accept': 'application/json',
+      'Authorization': 'Bearer $token',
+      'Content-Type': 'multipart/form-data',
+    };
+    final uri = Uri.parse(userURL);
+    var request = http.MultipartRequest('POST', uri);
+    var multipartFileSign =
+        http.MultipartFile('profil_img', stream, length, filename: image.path);
+    request.headers.addAll(headers);
+    request.fields['username_update'] = userName;
+    request.fields['email_update'] = email;
+    request.fields['password_update'] = password;
+    request.fields['password_confirmation_update'] = password;
+    request.files.add(multipartFileSign);
+    final response = await request.send();
+    print('response code : ${response.statusCode}');
+    // response.stream.transform(utf8.decoder).listen((event) {
+    //   print(event);
+    // });
+    final res = await http.Response.fromStream(response);
+    print(res.contentLength);
     switch (response.statusCode) {
       case 200:
-        user = User.fromJson(jsonDecode(response.body)['user']);
+        // user = User.fromJson(jsonDecode(response.body)['user']);
         // user = apiResponse.data as User;
-        apiResponse.data = jsonDecode(response.body)['message'];
+        apiResponse.data =
+            jsonDecode(response.reasonPhrase.toString())['message'];
         break;
       case 401:
         apiResponse.errors = unauthorized;
@@ -146,7 +150,7 @@ Future<ApiResponse> updateUserProfile(
         break;
     }
   } catch (error) {
-    apiResponse.errors = serverError;
+    apiResponse.errors = error.toString();
   }
   return apiResponse;
 }

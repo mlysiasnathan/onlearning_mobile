@@ -32,11 +32,38 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        primarySwatch: Colors.indigo,
+        colorScheme: const ColorScheme.light(
+          primary: Color.fromRGBO(90, 90, 243, 1),
+        ),
         fontFamily: 'Comfortaa',
-        // textTheme: ThemeData.light().textTheme.copyWith(
-        //       titleLarge: const TextStyle(fontSize: 18),
-        //     ),
+      ).copyWith(
+        elevatedButtonTheme: ElevatedButtonThemeData(
+          style: TextButton.styleFrom(
+            backgroundColor: const Color.fromRGBO(90, 90, 243, 1),
+            elevation: 9,
+            fixedSize: const Size(double.infinity, 50),
+            padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+            side: const BorderSide(
+                color: Color.fromRGBO(90, 90, 243, 1), width: 1),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(25),
+            ),
+            textStyle: const TextStyle(fontSize: 19, fontFamily: 'Comfortaa'),
+          ),
+        ),
+        outlinedButtonTheme: OutlinedButtonThemeData(
+          style: TextButton.styleFrom(
+            fixedSize: const Size(double.infinity, 50),
+            padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+            side: const BorderSide(
+                color: Color.fromRGBO(90, 90, 243, 1), width: 3),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(25),
+            ),
+            textStyle: const TextStyle(fontSize: 19, fontFamily: 'Comfortaa'),
+          ),
+        ),
+        primaryColor: const Color.fromRGBO(90, 90, 243, 1),
       ),
       home: const SplashScreen(),
       routes: {
