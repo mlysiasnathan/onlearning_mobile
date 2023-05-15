@@ -9,7 +9,7 @@ import 'package:app/routes/categories_screen.dart';
 // import 'package:app/routes/products_overview_screen.dart';
 import 'package:flutter/material.dart';
 
-import '../models/user.dart';
+// import '../models/user.dart';
 import '../providers/constants.dart';
 
 // class SplashScreen extends StatelessWidget {
@@ -76,6 +76,7 @@ class _SplashScreenState extends State<SplashScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final mediaQuery = MediaQuery.of(context).size;
     return Scaffold(
       body: Container(
         color: const Color.fromRGBO(90, 90, 243, 1),
@@ -83,11 +84,7 @@ class _SplashScreenState extends State<SplashScreen> {
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
-            const Icon(
-              Icons.menu_book_sharp,
-              size: 70,
-              color: Colors.white,
-            ),
+            const SizedBox(),
             Container(
               // margin: const EdgeInsets.only(bottom: 10.0),
               padding:
@@ -112,6 +109,22 @@ class _SplashScreenState extends State<SplashScreen> {
                   fontSize: 30,
                   color: Color.fromRGBO(90, 90, 243, 1),
                   fontWeight: FontWeight.normal,
+                ),
+              ),
+            ),
+            Card(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(20),
+              ),
+              elevation: 19,
+              color: Colors.transparent,
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(20),
+                child: Image.asset(
+                  'assets/images/onlearning_logo.jpg',
+                  width: mediaQuery.height * 0.20,
+                  height: mediaQuery.height * 0.20,
+                  fit: BoxFit.cover,
                 ),
               ),
             ),

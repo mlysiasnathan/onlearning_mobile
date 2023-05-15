@@ -126,7 +126,7 @@ class _LessonScreenState extends State<LessonScreen> {
                             // physics: const NeverScrollableScrollPhysics(),
                             itemCount: documents.length,
                             itemBuilder: (context, index) => Padding(
-                              padding: const EdgeInsets.all(4.0),
+                              padding: const EdgeInsets.all(1.9),
                               child: OutlinedButton(
                                 onPressed: () {
                                   Navigator.of(context).pushNamed(

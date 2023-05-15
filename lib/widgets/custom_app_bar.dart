@@ -44,7 +44,7 @@ class CustomAppBar extends StatelessWidget {
                 fit: BoxFit.cover,
               )
             : Image.network(
-                '$assetsURL/storage/${image}',
+                '$assetsURL/storage/$image',
                 fit: BoxFit.cover,
               ),
       ),
@@ -52,9 +52,10 @@ class CustomAppBar extends StatelessWidget {
         padding: const EdgeInsets.all(8.0),
         child: InkWell(
           child: CircleAvatar(
+            radius: 9,
             backgroundColor: const Color.fromRGBO(90, 90, 243, 1),
             child: Image.asset(
-              'assets/images/apple-touch-icon.png',
+              'assets/images/onlearning_logo.png',
               fit: BoxFit.cover,
             ),
           ),
