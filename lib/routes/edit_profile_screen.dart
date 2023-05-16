@@ -51,6 +51,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
           TextButton(
             onPressed: () {
               Navigator.pop(ctx);
+              Navigator.pop(ctx);
             },
             child: const Text('Close'),
           ),
@@ -69,13 +70,11 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       _isLoading = true;
     });
     try {
-      print(_updateData);
-      print(_storedImage);
       // Update user
       ApiResponse response = await updateUserProfile(
         _updateData['user_name_update'].toString(),
         _updateData['email_update'].toString(),
-        _updateData['password'].toString(),
+        _updateData['password_update'].toString(),
         _storedImage!,
       );
       if (response.errors == null) {

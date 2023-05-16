@@ -129,18 +129,12 @@ Future<ApiResponse> updateUserProfile(
     request.fields['password_confirmation_update'] = password;
     request.files.add(multipartFileSign);
     final response = await request.send();
-    print('response code : ${response.statusCode}');
-    // response.stream.transform(utf8.decoder).listen((event) {
-    //   print(event);
-    // });
     final res = await http.Response.fromStream(response);
-    print(res.contentLength);
     switch (response.statusCode) {
       case 200:
-        // user = User.fromJson(jsonDecode(response.body)['user']);
-        // user = apiResponse.data as User;
-        apiResponse.data =
-            jsonDecode(response.reasonPhrase.toString())['message'];
+        user = User.fromJson(jsonDecode(res.body));
+        apiResponse.data = jsonDecode(res.body)['message'];
+        print(request.fields);
         break;
       case 401:
         apiResponse.errors = unauthorized;
@@ -150,7 +144,7 @@ Future<ApiResponse> updateUserProfile(
         break;
     }
   } catch (error) {
-    apiResponse.errors = error.toString();
+    apiResponse.errors = serverError;
   }
   return apiResponse;
 }

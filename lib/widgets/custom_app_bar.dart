@@ -50,14 +50,11 @@ class CustomAppBar extends StatelessWidget {
       ),
       leading: Padding(
         padding: const EdgeInsets.all(8.0),
-        child: InkWell(
-          child: CircleAvatar(
-            radius: 9,
-            backgroundColor: const Color.fromRGBO(90, 90, 243, 1),
-            child: Image.asset(
-              'assets/images/onlearning_logo.png',
-              fit: BoxFit.cover,
-            ),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(6),
+          child: Image.asset(
+            'assets/images/onlearning_logo.jpg',
+            fit: BoxFit.cover,
           ),
         ),
       ),
