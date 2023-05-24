@@ -47,11 +47,18 @@ class CategoryItem extends StatelessWidget {
                     topLeft: Radius.circular(15),
                     topRight: Radius.circular(15),
                   ),
-                  child: Image.network(
-                    '${assetsURL}/storage/${catImg!}',
+                  child: FadeInImage(
+                    fadeInDuration: const Duration(seconds: 1),
+                    fadeOutDuration: const Duration(seconds: 1),
                     height: 250,
                     width: double.infinity,
                     fit: BoxFit.cover,
+                    placeholder: const AssetImage(
+                      'assets/images/placeholder.PNG',
+                    ),
+                    image: NetworkImage(
+                      '$assetsURL/storage/${catImg!}',
+                    ),
                   ),
                 ),
                 Positioned(

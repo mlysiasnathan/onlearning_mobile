@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import '../providers/constants.dart';
-import '../providers/user_services.dart';
+import '../providers/users_provider.dart';
 import '../routes/auth_screen.dart';
 import '../routes/edit_profile_screen.dart';
 
@@ -10,17 +11,18 @@ class CustomDrawer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final userData = Provider.of<Users>(context);
     return Drawer(
       child: ListView(
         children: <Widget>[
           UserAccountsDrawerHeader(
             decoration:
                 const BoxDecoration(color: Color.fromRGBO(90, 90, 243, 1)),
-            accountName: Text('${user.userName}'),
-            accountEmail: Text('${user.userEmail}'),
+            accountName: Text('${userData.user.userName}'),
+            accountEmail: Text('${userData.user.userEmail}'),
             currentAccountPicture: CircleAvatar(
               backgroundImage: Image.network(
-                '${assetsURL}/storage/${user.image!}',
+                '${assetsURL}/storage/${userData.user.image!}',
                 fit: BoxFit.cover,
               ).image,
               backgroundColor: Colors.white,
@@ -39,13 +41,13 @@ class CustomDrawer extends StatelessWidget {
           ListTile(
             title: const Text('Logout', style: TextStyle(color: Colors.red)),
             onTap: () {
-              logout().then(
-                (value) => Navigator.of(context).pushAndRemoveUntil(
-                    MaterialPageRoute(
-                      builder: (context) => const AuthScreen(),
-                    ),
-                    (route) => false),
-              );
+              userData.logout().then(
+                    (value) => Navigator.of(context).pushAndRemoveUntil(
+                        MaterialPageRoute(
+                          builder: (context) => const AuthScreen(),
+                        ),
+                        (route) => false),
+                  );
             },
           ),
         ],

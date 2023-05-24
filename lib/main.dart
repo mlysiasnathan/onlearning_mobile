@@ -1,23 +1,15 @@
 import 'package:flutter/material.dart';
-// import 'package:provider/provider.dart';
-//
-// import './providers/cart.dart';
-// import './providers/auth.dart';
-// import './providers/products_provider.dart';
-// import './providers/orders.dart';
-// import './routes/products_overview_screen.dart';
-// import './routes/product_detail_screen.dart';
-// import './routes/orders_screen.dart';
-// import './routes/user_product_screen.dart';
-// import './routes/edit_product_screen.dart';
-// import './routes/cart_screen.dart';
-// import './routes/auth_screen.dart';
+import 'package:provider/provider.dart';
+
 import './routes/categories_screen.dart';
 import './routes/category_details_screen.dart';
 import './routes/lesson_screen.dart';
 import './routes/splash_screen.dart';
 import './routes/document_viewer_screen.dart';
 import './routes/edit_profile_screen.dart';
+import './providers/categories_provider.dart';
+import './providers/lessons_provider.dart';
+import './providers/users_provider.dart';
 
 void main() {
   runApp(const MyApp());
@@ -29,50 +21,64 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        colorScheme: const ColorScheme.light(
-          primary: Color.fromRGBO(90, 90, 243, 1),
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(
+          create: (ctx) => Users(),
         ),
-        fontFamily: 'Comfortaa',
-      ).copyWith(
-        elevatedButtonTheme: ElevatedButtonThemeData(
-          style: TextButton.styleFrom(
-            backgroundColor: const Color.fromRGBO(90, 90, 243, 1),
-            elevation: 9,
-            fixedSize: const Size(double.infinity, 50),
-            padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-            side: const BorderSide(
-                color: Color.fromRGBO(90, 90, 243, 1), width: 1),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(25),
-            ),
-            textStyle: const TextStyle(fontSize: 19, fontFamily: 'Comfortaa'),
+        ChangeNotifierProvider(
+          create: (ctx) => Categories(),
+        ),
+        ChangeNotifierProvider(
+          create: (ctx) => Lessons(),
+        ),
+      ],
+      child: MaterialApp(
+        debugShowCheckedModeBanner: false,
+        theme: ThemeData(
+          colorScheme: const ColorScheme.light(
+            primary: Color.fromRGBO(90, 90, 243, 1),
           ),
-        ),
-        outlinedButtonTheme: OutlinedButtonThemeData(
-          style: TextButton.styleFrom(
-            fixedSize: const Size(double.infinity, 50),
-            padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-            side: const BorderSide(
-                color: Color.fromRGBO(90, 90, 243, 1), width: 3),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(25),
+          fontFamily: 'Comfortaa',
+        ).copyWith(
+          elevatedButtonTheme: ElevatedButtonThemeData(
+            style: TextButton.styleFrom(
+              backgroundColor: const Color.fromRGBO(90, 90, 243, 1),
+              elevation: 9,
+              fixedSize: const Size(double.infinity, 50),
+              padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+              side: const BorderSide(
+                  color: Color.fromRGBO(90, 90, 243, 1), width: 1),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(25),
+              ),
+              textStyle: const TextStyle(fontSize: 19, fontFamily: 'Comfortaa'),
             ),
-            textStyle: const TextStyle(fontSize: 19, fontFamily: 'Comfortaa'),
           ),
+          outlinedButtonTheme: OutlinedButtonThemeData(
+            style: TextButton.styleFrom(
+              fixedSize: const Size(double.infinity, 50),
+              padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+              side: const BorderSide(
+                  color: Color.fromRGBO(90, 90, 243, 1), width: 3),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(25),
+              ),
+              textStyle: const TextStyle(fontSize: 19, fontFamily: 'Comfortaa'),
+            ),
+          ),
+          primaryColor: const Color.fromRGBO(90, 90, 243, 1),
         ),
-        primaryColor: const Color.fromRGBO(90, 90, 243, 1),
+        home: const SplashScreen(),
+        routes: {
+          CategoriesScreen.routeName: (ctx) => const CategoriesScreen(),
+          CategoryDetailsScreen.routeName: (ctx) =>
+              const CategoryDetailsScreen(),
+          LessonScreen.routeName: (ctx) => const LessonScreen(),
+          DocumentViewerScreen.routeName: (ctx) => const DocumentViewerScreen(),
+          EditProfileScreen.routeName: (ctx) => const EditProfileScreen(),
+        },
       ),
-      home: const SplashScreen(),
-      routes: {
-        CategoriesScreen.routeName: (ctx) => const CategoriesScreen(),
-        CategoryDetailsScreen.routeName: (ctx) => const CategoryDetailsScreen(),
-        LessonScreen.routeName: (ctx) => const LessonScreen(),
-        DocumentViewerScreen.routeName: (ctx) => const DocumentViewerScreen(),
-        EditProfileScreen.routeName: (ctx) => const EditProfileScreen(),
-      },
     );
     //provider=======================================================
     //   MultiProvider(

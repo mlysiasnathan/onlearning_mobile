@@ -43,9 +43,16 @@ class CustomAppBar extends StatelessWidget {
                 'assets/images/line.jpg',
                 fit: BoxFit.cover,
               )
-            : Image.network(
-                '$assetsURL/storage/$image',
+            : FadeInImage(
+                fadeInDuration: const Duration(seconds: 1),
+                fadeOutDuration: const Duration(seconds: 1),
                 fit: BoxFit.cover,
+                placeholder: const AssetImage(
+                  'assets/images/placeholder.PNG',
+                ),
+                image: NetworkImage(
+                  '$assetsURL/storage/$image',
+                ),
               ),
       ),
       leading: Padding(

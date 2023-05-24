@@ -1,18 +1,19 @@
 import 'dart:math';
 
-import 'package:app/routes/document_viewer_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
+import './document_viewer_screen.dart';
 import '../models/api_response.dart';
 import '../models/document.dart';
 import '../models/video.dart';
 import '../providers/constants.dart';
-import '../providers/lesson_services.dart';
-import '../providers/user_services.dart';
+import '../providers/lessons_provider.dart';
+import '../providers/users_provider.dart';
 import '../widgets/custom_app_bar.dart';
 import '../widgets/custom_app_drawer.dart';
 import '../widgets/video_item.dart';
-import 'auth_screen.dart';
+import './auth_screen.dart';
 
 class LessonScreen extends StatefulWidget {
   const LessonScreen({Key? key}) : super(key: key);
@@ -24,54 +25,57 @@ class LessonScreen extends StatefulWidget {
 
 class _LessonScreenState extends State<LessonScreen> {
   Map<String, dynamic> lessonData = {};
-  // List<dynamic> course = [];
   List<dynamic> videos = [];
   List<dynamic> documents = [];
   bool _isLoading = true;
   bool isLoaded = false;
 
-  Future<void> retrieveCourseAttachments(String catName, String lesName) async {
-    ApiResponse response = await getCourseDetails(catName, lesName);
-    if (response.errors == null) {
-      setState(() {
-        lessonData = response.data as Map<String, dynamic>;
-        videos = lessonData['videos']
-            .map((video) => Video.fromJson(video))
-            .toList() as List<dynamic>;
-        documents = lessonData['documents']
-            .map((document) => Document.fromJson(document))
-            .toList() as List<dynamic>;
-        // course = lessonData['course'] as List<dynamic>;
-        _isLoading = !_isLoading;
-      });
-    } else if (response.errors == unauthorized) {
-      logout().then(
-        (value) => {
-          Navigator.of(context).pushAndRemoveUntil(
-              MaterialPageRoute(
-                builder: (context) => const AuthScreen(),
-              ),
-              (route) => false)
-        },
-      );
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          dismissDirection: DismissDirection.up,
-          backgroundColor: Colors.red,
-          content: Text('${response.errors}'),
-        ),
-      );
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     final lesInfo =
         ModalRoute.of(context)?.settings.arguments as Map<String, String?>;
+    final userData = Provider.of<Users>(context);
+    final coursesData = Provider.of<Lessons>(context);
     final catName = lesInfo['catName'];
     final lesName = lesInfo['lesName'];
     final lesImg = lesInfo['lesImg'];
+    Future<void> retrieveCourseAttachments(
+        String catName, String lesName) async {
+      ApiResponse response =
+          await coursesData.getCourseDetails(catName, lesName);
+      if (response.errors == null) {
+        setState(() {
+          lessonData = response.data as Map<String, dynamic>;
+          videos = lessonData['videos']
+              .map((video) => Video.fromJson(video))
+              .toList() as List<dynamic>;
+          documents = lessonData['documents']
+              .map((document) => Document.fromJson(document))
+              .toList() as List<dynamic>;
+          // course = lessonData['course'] as List<dynamic>;
+          _isLoading = !_isLoading;
+        });
+      } else if (response.errors == unauthorized) {
+        userData.logout().then(
+              (value) => {
+                Navigator.of(context).pushAndRemoveUntil(
+                    MaterialPageRoute(
+                      builder: (context) => const AuthScreen(),
+                    ),
+                    (route) => false)
+              },
+            );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            dismissDirection: DismissDirection.up,
+            backgroundColor: Colors.red,
+            content: Text('${response.errors}'),
+          ),
+        );
+      }
+    }
+
     if (!isLoaded) {
       retrieveCourseAttachments(catName!, lesName!);
       isLoaded = true;

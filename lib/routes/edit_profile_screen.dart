@@ -2,11 +2,12 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:provider/provider.dart';
 
 import '../models/api_response.dart';
 import '../models/http_exceptions.dart';
 import '../providers/constants.dart';
-import '../providers/user_services.dart';
+import '../providers/users_provider.dart';
 import '../widgets/custom_app_bar.dart';
 import '../widgets/custom_app_drawer.dart';
 
@@ -60,56 +61,58 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     );
   }
 
-  Future<void> _submit() async {
-    if (!_formKey.currentState!.validate()) {
-      // Invalid!
-      return;
-    }
-    _formKey.currentState?.save();
-    setState(() {
-      _isLoading = true;
-    });
-    try {
-      // Update user
-      ApiResponse response = await updateUserProfile(
-        _updateData['user_name_update'].toString(),
-        _updateData['email_update'].toString(),
-        _updateData['password_update'].toString(),
-        _storedImage!,
-      );
-      if (response.errors == null) {
-        _showErrorDialog(response.data.toString());
-      } else {
-        _showErrorDialog(response.errors.toString());
-      }
-      // await Provider.of<Auth>(context, listen: false)
-      //     .login(_updateData['email']!, _updateData['password']!);
-    } on MyPersonalHttpException catch (error) {
-      var errorMessage = 'Authentication failed !';
-      if (error.toString().contains('EMAIL_EXISTS')) {
-        errorMessage = 'This email is already taken !';
-      } else if (error.toString().contains('INVALID_EMAIL')) {
-        errorMessage = 'This email is invalid !';
-      } else if (error.toString().contains('WEAK_PASSWORD')) {
-        errorMessage = 'This password is too weak !';
-      } else if (error.toString().contains('EMAIL_NOT_FOUND')) {
-        errorMessage = 'Could not find a user with this email !';
-      } else if (error.toString().contains('INVALID_PASSWORD')) {
-        errorMessage = 'This password is invalid !';
-      }
-      _showErrorDialog(errorMessage);
-    } catch (error) {
-      const errorMessage = 'Could not Update your profile. Try later !';
-      _showErrorDialog(errorMessage);
-    }
-
-    setState(() {
-      _isLoading = false;
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
+    final userData = Provider.of<Users>(context);
+
+    Future<void> _submit() async {
+      if (!_formKey.currentState!.validate()) {
+        // Invalid!
+        return;
+      }
+      _formKey.currentState?.save();
+      setState(() {
+        _isLoading = true;
+      });
+      try {
+        // Update user
+        ApiResponse response = await userData.updateUserProfile(
+          _updateData['user_name_update'].toString(),
+          _updateData['email_update'].toString(),
+          _updateData['password_update'].toString(),
+          _storedImage!,
+        );
+        if (response.errors == null) {
+          _showErrorDialog(response.data.toString());
+        } else {
+          _showErrorDialog(response.errors.toString());
+        }
+        // await Provider.of<Auth>(context, listen: false)
+        //     .login(_updateData['email']!, _updateData['password']!);
+      } on MyPersonalHttpException catch (error) {
+        var errorMessage = 'Authentication failed !';
+        if (error.toString().contains('EMAIL_EXISTS')) {
+          errorMessage = 'This email is already taken !';
+        } else if (error.toString().contains('INVALID_EMAIL')) {
+          errorMessage = 'This email is invalid !';
+        } else if (error.toString().contains('WEAK_PASSWORD')) {
+          errorMessage = 'This password is too weak !';
+        } else if (error.toString().contains('EMAIL_NOT_FOUND')) {
+          errorMessage = 'Could not find a user with this email !';
+        } else if (error.toString().contains('INVALID_PASSWORD')) {
+          errorMessage = 'This password is invalid !';
+        }
+        _showErrorDialog(errorMessage);
+      } catch (error) {
+        const errorMessage = 'Could not Update your profile. Try later !';
+        _showErrorDialog(errorMessage);
+      }
+
+      setState(() {
+        _isLoading = false;
+      });
+    }
+
     return Scaffold(
       endDrawer: const CustomDrawer(),
       body: CustomScrollView(
@@ -137,7 +140,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                               ),
                               child: _storedImage == null
                                   ? Image.network(
-                                      '$assetsURL/storage/${user.image!}',
+                                      '$assetsURL/storage/${userData.user.image!}',
                                       height: 400,
                                       width: double.infinity,
                                       fit: BoxFit.cover,
@@ -179,7 +182,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                 }
                                 return null;
                               },
-                              initialValue: user.userName,
+                              initialValue: userData.user.userName,
                               onSaved: (value) {
                                 _updateData['user_name_update'] = value!;
                               },
@@ -188,7 +191,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                               decoration: const InputDecoration(
                                   labelText: 'email address'),
                               keyboardType: TextInputType.emailAddress,
-                              initialValue: user.userEmail,
+                              initialValue: userData.user.userEmail,
                               validator: (value) {
                                 if (value!.isEmpty || !value.contains('@')) {
                                   return 'Invalid email!';

@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import '../models/api_response.dart';
-import '../providers/categories_services.dart';
+import '../providers/categories_provider.dart';
 import '../providers/constants.dart';
-import '../providers/user_services.dart';
+import '../providers/users_provider.dart';
 import '../widgets/category_item.dart';
 import '../widgets/custom_app_bar.dart';
 import '../widgets/custom_app_drawer.dart';
@@ -20,47 +21,49 @@ class CategoriesScreen extends StatefulWidget {
 class _CategoriesScreenState extends State<CategoriesScreen> {
   List<dynamic> categories = [];
   bool _isLoading = true;
-  Future<void> retrieveCategories() async {
-    ApiResponse response = await getAllCategories();
-    if (response.errors == null) {
-      setState(() {
-        categories = response.data as List<dynamic>;
-        _isLoading = !_isLoading;
-      });
-    } else if (response.errors == unauthorized) {
-      logout().then(
-        (value) => {
-          Navigator.of(context).pushAndRemoveUntil(
-              MaterialPageRoute(
-                builder: (context) => const AuthScreen(),
-              ),
-              (route) => false)
-        },
-      );
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          backgroundColor: Colors.red,
-          content: Text('${response.errors}'),
-        ),
-      );
-    }
-  }
-
-  @override
-  void initState() {
-    retrieveCategories();
-    super.initState();
-  }
+  bool isLoaded = false;
 
   @override
   Widget build(BuildContext context) {
+    final userData = Provider.of<Users>(context);
+    final categoriesData = Provider.of<Categories>(context);
+    Future<void> retrieveCategories() async {
+      ApiResponse response = await categoriesData.getAllCategories();
+      if (response.errors == null) {
+        setState(() {
+          categories = response.data as List<dynamic>;
+          _isLoading = !_isLoading;
+        });
+      } else if (response.errors == unauthorized) {
+        userData.logout().then(
+              (value) => {
+                Navigator.of(context).pushAndRemoveUntil(
+                    MaterialPageRoute(
+                      builder: (context) => const AuthScreen(),
+                    ),
+                    (route) => false)
+              },
+            );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            backgroundColor: Colors.red,
+            content: Text('${response.errors}'),
+          ),
+        );
+      }
+    }
+
+    if (!isLoaded) {
+      retrieveCategories();
+      isLoaded = true;
+    }
     return Scaffold(
       floatingActionButton: FloatingActionButton(
         backgroundColor: const Color.fromRGBO(90, 90, 243, 1),
         onPressed: () {
-          retrieveCategories();
           setState(() {
+            isLoaded = false;
             _isLoading = !_isLoading;
           });
         },

@@ -1,16 +1,13 @@
 import 'dart:math';
 
-import 'package:app/models/api_response.dart';
-import 'package:app/providers/user_services.dart';
-// import 'package:app/routes/product_detail_screen.dart';
-// import 'package:app/routes/products_overview_screen.dart';
 import 'package:flutter/material.dart';
-// import 'package:provider/provider.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-// import '../providers/auth.dart';
+import '../providers/users_provider.dart';
 import '../models/http_exceptions.dart';
 import '../models/user.dart';
+import '../models/api_response.dart';
 import './categories_screen.dart';
 
 enum AuthMode { Signup, Login }
@@ -143,63 +140,6 @@ class _AuthCardState extends State<AuthCard>
         (route) => false);
   }
 
-  Future<void> _submit() async {
-    if (!_formKey.currentState!.validate()) {
-      // Invalid!
-      return;
-    }
-    _formKey.currentState?.save();
-    setState(() {
-      _isLoading = true;
-    });
-    try {
-      if (_authMode == AuthMode.Login) {
-        // Log user in
-        ApiResponse response =
-            await login(_authData['email']!, _authData['password']!);
-        if (response.errors == null) {
-          _savedAndRedirect(response.data as User);
-        } else {
-          _showErrorDialog(response.errors.toString());
-        }
-        // await Provider.of<Auth>(context, listen: false)
-        //     .login(_authData['email']!, _authData['password']!);
-      } else {
-        // Sign user up
-        ApiResponse response = await register(_authData['user_name']!,
-            _authData['email']!, _authData['password']!);
-        if (response.errors == null) {
-          _savedAndRedirect(response.data as User);
-        } else {
-          _showErrorDialog(response.errors.toString());
-        }
-        // await Provider.of<Auth>(context, listen: false)
-        //     .signup(_authData['email']!, _authData['password']!);
-      }
-    } on MyPersonalHttpException catch (error) {
-      var errorMessage = 'Authentication failed !';
-      if (error.toString().contains('EMAIL_EXISTS')) {
-        errorMessage = 'This email is already taken !';
-      } else if (error.toString().contains('INVALID_EMAIL')) {
-        errorMessage = 'This email is invalid !';
-      } else if (error.toString().contains('WEAK_PASSWORD')) {
-        errorMessage = 'This password is too weak !';
-      } else if (error.toString().contains('EMAIL_NOT_FOUND')) {
-        errorMessage = 'Could not find a user with this email !';
-      } else if (error.toString().contains('INVALID_PASSWORD')) {
-        errorMessage = 'This password is invalid !';
-      }
-      _showErrorDialog(errorMessage);
-    } catch (error) {
-      const errorMessage = 'Could not Authenticate you. Try later !';
-      _showErrorDialog(errorMessage);
-    }
-
-    setState(() {
-      _isLoading = false;
-    });
-  }
-
   void _switchAuthMode() {
     if (_authMode == AuthMode.Login) {
       setState(() {
@@ -238,6 +178,66 @@ class _AuthCardState extends State<AuthCard>
 
   @override
   Widget build(BuildContext context) {
+    final userData = Provider.of<Users>(context);
+    Future<void> _submit() async {
+      if (!_formKey.currentState!.validate()) {
+        // Invalid!
+        return;
+      }
+      _formKey.currentState?.save();
+      setState(() {
+        _isLoading = true;
+      });
+      try {
+        if (_authMode == AuthMode.Login) {
+          // Log user in
+          ApiResponse response =
+              await userData.login(_authData['email']!, _authData['password']!);
+          if (response.errors == null) {
+            _savedAndRedirect(response.data as User);
+          } else {
+            _showErrorDialog(response.errors.toString());
+          }
+          // await Provider.of<Auth>(context, listen: false)
+          //     .login(_authData['email']!, _authData['password']!);
+        } else {
+          // Sign user up
+          ApiResponse response = await userData.register(
+              _authData['user_name']!,
+              _authData['email']!,
+              _authData['password']!);
+          if (response.errors == null) {
+            _savedAndRedirect(response.data as User);
+          } else {
+            _showErrorDialog(response.errors.toString());
+          }
+          // await Provider.of<Auth>(context, listen: false)
+          //     .signup(_authData['email']!, _authData['password']!);
+        }
+      } on MyPersonalHttpException catch (error) {
+        var errorMessage = 'Authentication failed !';
+        if (error.toString().contains('EMAIL_EXISTS')) {
+          errorMessage = 'This email is already taken !';
+        } else if (error.toString().contains('INVALID_EMAIL')) {
+          errorMessage = 'This email is invalid !';
+        } else if (error.toString().contains('WEAK_PASSWORD')) {
+          errorMessage = 'This password is too weak !';
+        } else if (error.toString().contains('EMAIL_NOT_FOUND')) {
+          errorMessage = 'Could not find a user with this email !';
+        } else if (error.toString().contains('INVALID_PASSWORD')) {
+          errorMessage = 'This password is invalid !';
+        }
+        _showErrorDialog(errorMessage);
+      } catch (error) {
+        const errorMessage = 'Could not Authenticate you. Try later !';
+        _showErrorDialog(errorMessage);
+      }
+
+      setState(() {
+        _isLoading = false;
+      });
+    }
+
     final deviceSize = MediaQuery.of(context).size;
     return AnimatedContainer(
       duration: const Duration(milliseconds: 300),

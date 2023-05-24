@@ -1,15 +1,12 @@
-// import 'dart:html';
-
 import 'dart:math';
 
 import 'package:app/models/api_response.dart';
-import 'package:app/providers/user_services.dart';
+import 'package:app/providers/users_provider.dart';
 import 'package:app/routes/auth_screen.dart';
 import 'package:app/routes/categories_screen.dart';
-// import 'package:app/routes/products_overview_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
-// import '../models/user.dart';
 import '../providers/constants.dart';
 
 // class SplashScreen extends StatelessWidget {
@@ -41,41 +38,42 @@ class SplashScreen extends StatefulWidget {
 }
 
 class _SplashScreenState extends State<SplashScreen> {
-  void _loadingUserInfo() async {
-    String token = await getToken();
-    if (token == '') {
-      Navigator.of(context).pushAndRemoveUntil(
-          MaterialPageRoute(builder: (context) => const AuthScreen()),
-          (route) => false);
-    } else {
-      ApiResponse response = await gerUserDetail();
-      if (response.errors == null) {
-        Navigator.of(context).pushAndRemoveUntil(
-            MaterialPageRoute(builder: (context) => const CategoriesScreen()),
-            (route) => false);
-      } else if (response.errors == unauthorized) {
+  bool isLoaded = false;
+
+  @override
+  Widget build(BuildContext context) {
+    final userData = Provider.of<Users>(context);
+    void loadingUserInfo() async {
+      String token = await userData.getToken();
+      if (token == '') {
         Navigator.of(context).pushAndRemoveUntil(
             MaterialPageRoute(builder: (context) => const AuthScreen()),
             (route) => false);
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('${response.errors}'),
-          ),
-        );
+        ApiResponse response = await userData.gerUserDetail();
+        if (response.errors == null) {
+          Navigator.of(context).pushAndRemoveUntil(
+              MaterialPageRoute(builder: (context) => const CategoriesScreen()),
+              (route) => false);
+        } else if (response.errors == unauthorized) {
+          Navigator.of(context).pushAndRemoveUntil(
+              MaterialPageRoute(builder: (context) => const AuthScreen()),
+              (route) => false);
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('${response.errors}'),
+            ),
+          );
+        }
       }
     }
-  }
 
-  @override
-  void initState() {
-    _loadingUserInfo();
-    print('try login');
-    super.initState();
-  }
+    if (!isLoaded) {
+      loadingUserInfo();
+      isLoaded = true;
+    }
 
-  @override
-  Widget build(BuildContext context) {
     final mediaQuery = MediaQuery.of(context).size;
     return Scaffold(
       body: Container(
