@@ -1,14 +1,10 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../models/api_response.dart';
-import '../providers/categories_provider.dart';
-import '../providers/constants.dart';
-import '../providers/users_provider.dart';
-import '../widgets/category_item.dart';
-import '../widgets/custom_app_bar.dart';
-import '../widgets/custom_app_drawer.dart';
-import './auth_screen.dart';
+import '../providers/providers.dart';
+import '../widgets/widgets.dart';
 
 class CategoriesScreen extends StatefulWidget {
   const CategoriesScreen({Key? key}) : super(key: key);
@@ -19,53 +15,14 @@ class CategoriesScreen extends StatefulWidget {
 }
 
 class _CategoriesScreenState extends State<CategoriesScreen> {
-  List<dynamic> categories = [];
-  bool _isLoading = true;
-  bool isLoaded = false;
-
   @override
   Widget build(BuildContext context) {
-    final userData = Provider.of<Users>(context);
-    final categoriesData = Provider.of<Categories>(context);
-    Future<void> retrieveCategories() async {
-      ApiResponse response = await categoriesData.getAllCategories();
-      if (response.errors == null) {
-        setState(() {
-          categories = response.data as List<dynamic>;
-          _isLoading = !_isLoading;
-        });
-      } else if (response.errors == unauthorized) {
-        userData.logout().then(
-              (value) => {
-                Navigator.of(context).pushAndRemoveUntil(
-                    MaterialPageRoute(
-                      builder: (context) => const AuthScreen(),
-                    ),
-                    (route) => false)
-              },
-            );
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            backgroundColor: Colors.red,
-            content: Text('${response.errors}'),
-          ),
-        );
-      }
-    }
-
-    if (!isLoaded) {
-      retrieveCategories();
-      isLoaded = true;
-    }
+    final categoriesData = Provider.of<Categories>(context, listen: false);
     return Scaffold(
       floatingActionButton: FloatingActionButton(
         backgroundColor: const Color.fromRGBO(90, 90, 243, 1),
         onPressed: () {
-          setState(() {
-            isLoaded = false;
-            _isLoading = !_isLoading;
-          });
+          setState(() {});
         },
         child:
             const Icon(Icons.replay_circle_filled_rounded, color: Colors.white),
@@ -76,33 +33,70 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
           const CustomAppBar(
             title: 'Categories',
           ),
-          _isLoading
-              ? const SliverFillRemaining(
+          FutureBuilder(
+            future: categoriesData.getAllCategories(),
+            builder: (context, dataSnapshot) {
+              if (dataSnapshot.connectionState == ConnectionState.waiting) {
+                return const SliverFillRemaining(
                   child: Center(
                     child: CircularProgressIndicator(),
                   ),
-                )
-              : categories.isEmpty
-                  ? const SliverFillRemaining(
-                      child: Center(
-                        child: Text(
-                          'Category not yet published',
-                          style: TextStyle(fontSize: 24),
+                );
+              } else {
+                if (dataSnapshot.error != null) {
+                  Timer(Duration.zero, () {
+                    ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        closeIconColor: Colors.white,
+                        showCloseIcon: true,
+                        backgroundColor: Colors.red,
+                        content: Text('${dataSnapshot.error}'),
+                        duration: const Duration(seconds: 10),
+                        behavior: SnackBarBehavior.floating,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(15),
                         ),
                       ),
-                    )
-                  : SliverList(
-                      delegate: SliverChildBuilderDelegate(
-                        (context, index) => CategoryItem(
-                          catId: categories[index].catId,
-                          catName: categories[index].catName,
-                          catImg: categories[index].catImg,
-                          catDescription: categories[index].catDescription,
-                          createdAt: categories[index].createdAt,
-                        ),
-                        childCount: categories.length,
+                    );
+                  });
+                  return const SliverFillRemaining(
+                    child: Center(
+                      child: Text(
+                        'An Error was occurred !!',
+                        style: TextStyle(fontSize: 24),
                       ),
                     ),
+                  );
+                } else if (categoriesData.categories.isEmpty) {
+                  return const SliverFillRemaining(
+                    child: Center(
+                      child: Text(
+                        'Category not yet published',
+                        style: TextStyle(fontSize: 24),
+                      ),
+                    ),
+                  );
+                } else {
+                  return SliverList(
+                    delegate: SliverChildBuilderDelegate(
+                      (context, index) => Consumer<Categories>(
+                        builder: (ctx, categoriesData, child) => CategoryItem(
+                          catId: categoriesData.categories[index].catId,
+                          catName: categoriesData.categories[index].catName,
+                          catImg: categoriesData.categories[index].catImg,
+                          catDescription:
+                              categoriesData.categories[index].catDescription,
+                          createdAt: categoriesData.categories[index].createdAt,
+                        ),
+                      ),
+                      childCount: categoriesData.categories.length,
+                    ),
+                  );
+                }
+              }
+            },
+          ),
         ],
       ),
     );

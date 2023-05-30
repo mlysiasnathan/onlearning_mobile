@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'package:async/async.dart';
@@ -6,15 +7,25 @@ import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../providers/constants.dart';
-import '../models/api_response.dart';
-import '../models/user.dart';
+import '../providers/providers.dart';
+import '../models/models.dart';
 
-class Users with ChangeNotifier {
+class Auth with ChangeNotifier {
   late User user;
+  String? _token;
 
-  Future<ApiResponse> login(String email, String password) async {
-    ApiResponse apiResponse = ApiResponse();
+  bool get isAuth {
+    return token != null;
+  }
+
+  String? get token {
+    if (_token != null) {
+      return _token;
+    }
+    return null;
+  }
+
+  Future<void> login(String email, String password) async {
     try {
       final response = await http.post(
         Uri.parse(loginURL),
@@ -26,29 +37,27 @@ class Users with ChangeNotifier {
       );
       switch (response.statusCode) {
         case 200:
-          apiResponse.data = User.fromJson(jsonDecode(response.body));
-          user = apiResponse.data as User;
+          user = User.fromJson(jsonDecode(response.body));
+          _token = jsonDecode(response.body)['token'];
+          final prefs = await SharedPreferences.getInstance();
+          final userData = json.encode({'token': _token});
+          prefs.setString('userData', userData);
           break;
         case 422:
           final errors = jsonDecode(response.body)['errors'];
-          apiResponse.errors = errors[errors.keys.elementAt(0)][0];
-          break;
+          throw (errors[errors.keys.elementAt(0)][0]);
         case 403:
-          apiResponse.errors = jsonDecode(response.body)['message'];
-          break;
+          throw (jsonDecode(response.body)['message']);
         default:
-          apiResponse.errors = somethingWentWrong;
-          break;
+          throw (somethingWentWrong);
       }
+      notifyListeners();
     } catch (error) {
-      apiResponse.errors = serverError;
+      rethrow;
     }
-    return apiResponse;
   }
 
-  Future<ApiResponse> register(
-      String userName, String email, String password) async {
-    ApiResponse apiResponse = ApiResponse();
+  Future<void> register(String userName, String email, String password) async {
     try {
       final response = await http.post(
         Uri.parse(registerURL),
@@ -62,62 +71,69 @@ class Users with ChangeNotifier {
       );
       switch (response.statusCode) {
         case 200:
-          apiResponse.data = User.fromJson(jsonDecode(response.body));
-          user = apiResponse.data as User;
+          user = User.fromJson(jsonDecode(response.body));
+          _token = jsonDecode(response.body)['token'];
+          final prefs = await SharedPreferences.getInstance();
+          final userData = json.encode({'token': _token});
+          prefs.setString('userData', userData);
           break;
         case 422:
           final errors = jsonDecode(response.body)['errors'];
-          apiResponse.errors = errors[errors.keys.elementAt(0)][0];
-          break;
+          throw (errors[errors.keys.elementAt(0)][0]);
+        case 403:
+          throw (jsonDecode(response.body)['message']);
         default:
-          apiResponse.errors = somethingWentWrong;
-          break;
+          throw (somethingWentWrong);
       }
+      notifyListeners();
     } catch (error) {
-      apiResponse.errors = serverError;
+      rethrow;
     }
-    return apiResponse;
   }
 
-  Future<ApiResponse> gerUserDetail() async {
-    ApiResponse apiResponse = ApiResponse();
+  Future<void> getUserDetail() async {
     try {
-      final token = await getToken();
       final response = await http.get(
         Uri.parse(userURL),
         headers: {
           'Accept': 'application/json',
-          'Authorization': 'Bearer $token',
+          'Authorization': 'Bearer $_token',
         },
       );
       switch (response.statusCode) {
         case 200:
-          apiResponse.data = User.fromJson(jsonDecode(response.body));
-          user = apiResponse.data as User;
+          user = User.fromJson(jsonDecode(response.body));
           break;
         case 401:
-          apiResponse.errors = unauthorized;
-          break;
+          throw (unauthorized);
         default:
-          apiResponse.errors = somethingWentWrong;
-          break;
+          throw (somethingWentWrong);
       }
     } catch (error) {
-      apiResponse.errors = serverError;
+      rethrow;
     }
-    return apiResponse;
   }
 
-  Future<ApiResponse> updateUserProfile(
+  Future<bool> tryAutologin() async {
+    final prefs = await SharedPreferences.getInstance();
+    if (!prefs.containsKey('userData')) {
+      return false;
+    }
+    final extractedUserData = json
+        .decode(prefs.getString('userData').toString()) as Map<String, dynamic>;
+    _token = extractedUserData['token'].toString();
+    notifyListeners();
+    return true;
+  }
+
+  Future<void> updateUserProfile(
       String userName, String email, String password, File image) async {
-    ApiResponse apiResponse = ApiResponse();
     try {
-      final token = await getToken();
       var stream = http.ByteStream(DelegatingStream.typed(image.openRead()));
       var length = await image.length();
       Map<String, String> headers = {
         'Accept': 'application/json',
-        'Authorization': 'Bearer $token',
+        'Authorization': 'Bearer $_token',
         'Content-Type': 'multipart/form-data',
       };
       final uri = Uri.parse(userURL);
@@ -135,34 +151,23 @@ class Users with ChangeNotifier {
       switch (response.statusCode) {
         case 200:
           user = User.fromJson(jsonDecode(res.body));
-          apiResponse.data = jsonDecode(res.body)['message'];
-          print(request.fields);
+          final message = jsonDecode(res.body)['message'];
           break;
         case 401:
-          apiResponse.errors = unauthorized;
-          break;
+          throw (unauthorized);
         default:
-          apiResponse.errors = somethingWentWrong;
-          break;
+          throw (somethingWentWrong);
       }
     } catch (error) {
-      apiResponse.errors = serverError;
+      rethrow;
     }
-    return apiResponse;
   }
 
-  Future<String> getToken() async {
+  Future<void> logout() async {
+    _token = null;
     SharedPreferences pref = await SharedPreferences.getInstance();
-    return pref.getString('token') ?? '';
-  }
-
-  Future<int> getUserId() async {
-    SharedPreferences pref = await SharedPreferences.getInstance();
-    return pref.getInt('user_id') ?? 0;
-  }
-
-  Future<bool> logout() async {
-    SharedPreferences pref = await SharedPreferences.getInstance();
-    return await pref.remove('token');
+    // await pref.remove('userData');
+    await pref.clear();
+    notifyListeners();
   }
 }

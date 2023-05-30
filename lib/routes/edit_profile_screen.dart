@@ -1,15 +1,13 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 
-import '../models/api_response.dart';
-import '../models/http_exceptions.dart';
-import '../providers/constants.dart';
-import '../providers/users_provider.dart';
-import '../widgets/custom_app_bar.dart';
-import '../widgets/custom_app_drawer.dart';
+import '../models/models.dart';
+import '../providers/providers.dart';
+import '../widgets/widgets.dart';
 
 class EditProfileScreen extends StatefulWidget {
   const EditProfileScreen({Key? key}) : super(key: key);
@@ -42,32 +40,73 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     });
   }
 
-  void _showErrorDialog(String message) {
-    showDialog<void>(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        title: const Text('An error occurred !'),
+  // void _showErrorDialog(String message) {
+  //   showDialog<void>(
+  //     context: context,
+  //     builder: (ctx) => AlertDialog(
+  //       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
+  //       title: const Text(
+  //         'An error occurred !',
+  //         style: TextStyle(color: Colors.red),
+  //       ),
+  //       content: Text(message),
+  //       actionsAlignment: MainAxisAlignment.center,
+  //       actions: [
+  //         TextButton(
+  //           onPressed: () {
+  //             Navigator.pop(ctx);
+  //           },
+  //           child: const Text('Close'),
+  //         ),
+  //       ],
+  //     ),
+  //   );
+  // }
+
+  void _showErrorToast(String message) {
+    ScaffoldMessenger.of(context).hideCurrentSnackBar();
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        closeIconColor: Colors.white,
+        showCloseIcon: true,
+        backgroundColor: Colors.red,
         content: Text(message),
-        actions: [
-          TextButton(
-            onPressed: () {
-              Navigator.pop(ctx);
-              Navigator.pop(ctx);
-            },
-            child: const Text('Close'),
-          ),
-        ],
+        duration: const Duration(seconds: 10),
+        behavior: SnackBarBehavior.floating,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(15),
+        ),
       ),
     );
   }
 
+  final _emailFocus = FocusNode();
+  final _password = FocusNode();
+  final _confirmPassword = FocusNode();
+  @override
+  void dispose() {
+    _emailFocus.dispose();
+    _password.dispose();
+    _confirmPassword.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
-    final userData = Provider.of<Users>(context);
+    final userData = Provider.of<Auth>(context);
+    void goBack() {
+      Timer(Duration.zero, () {
+        Navigator.pop(context);
+      });
+    }
 
     Future<void> _submit() async {
       if (!_formKey.currentState!.validate()) {
         // Invalid!
+        return;
+      }
+      if (_storedImage == null) {
+        _showErrorToast('Select a new Profile Picture');
         return;
       }
       _formKey.currentState?.save();
@@ -76,36 +115,18 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       });
       try {
         // Update user
-        ApiResponse response = await userData.updateUserProfile(
+        await userData.updateUserProfile(
           _updateData['user_name_update'].toString(),
           _updateData['email_update'].toString(),
           _updateData['password_update'].toString(),
           _storedImage!,
         );
-        if (response.errors == null) {
-          _showErrorDialog(response.data.toString());
-        } else {
-          _showErrorDialog(response.errors.toString());
-        }
-        // await Provider.of<Auth>(context, listen: false)
-        //     .login(_updateData['email']!, _updateData['password']!);
+        goBack();
       } on MyPersonalHttpException catch (error) {
-        var errorMessage = 'Authentication failed !';
-        if (error.toString().contains('EMAIL_EXISTS')) {
-          errorMessage = 'This email is already taken !';
-        } else if (error.toString().contains('INVALID_EMAIL')) {
-          errorMessage = 'This email is invalid !';
-        } else if (error.toString().contains('WEAK_PASSWORD')) {
-          errorMessage = 'This password is too weak !';
-        } else if (error.toString().contains('EMAIL_NOT_FOUND')) {
-          errorMessage = 'Could not find a user with this email !';
-        } else if (error.toString().contains('INVALID_PASSWORD')) {
-          errorMessage = 'This password is invalid !';
-        }
-        _showErrorDialog(errorMessage);
-      } catch (error) {
         const errorMessage = 'Could not Update your profile. Try later !';
-        _showErrorDialog(errorMessage);
+        _showErrorToast(errorMessage);
+      } catch (error) {
+        _showErrorToast(error.toString());
       }
 
       setState(() {
@@ -117,11 +138,12 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       endDrawer: const CustomDrawer(),
       body: CustomScrollView(
         slivers: <Widget>[
-          const CustomAppBar(title: 'Profile', image: null),
+          const CustomAppBar(title: 'Profile'),
           SliverFillRemaining(
             child: SingleChildScrollView(
               physics: const NeverScrollableScrollPhysics(),
               child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   Card(
                     shape: RoundedRectangleBorder(
@@ -167,31 +189,52 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                     ),
                   ),
                   Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 18.0),
+                    padding: EdgeInsets.only(
+                      left: 15.0,
+                      right: 15,
+                      bottom: MediaQuery.of(context).viewInsets.bottom + 15,
+                    ),
                     child: Form(
                       key: _formKey,
                       child: SingleChildScrollView(
                         child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
                           children: <Widget>[
                             TextFormField(
-                              decoration:
-                                  const InputDecoration(labelText: 'Names :'),
+                              decoration: const InputDecoration(
+                                hintText: 'Names :',
+                                prefixIcon: Icon(Icons.person),
+                              ),
                               validator: (value) {
                                 if (value!.isEmpty) {
                                   return 'Fill your names here!';
                                 }
                                 return null;
                               },
+                              onFieldSubmitted: (_) {
+                                FocusScope.of(context)
+                                    .requestFocus(_emailFocus);
+                              },
+                              textInputAction: TextInputAction.next,
                               initialValue: userData.user.userName,
                               onSaved: (value) {
                                 _updateData['user_name_update'] = value!;
                               },
                             ),
+                            const SizedBox(height: 5),
                             TextFormField(
                               decoration: const InputDecoration(
-                                  labelText: 'email address'),
+                                // labelText: 'Email address',
+                                hintText: 'Email address',
+                                prefixIcon: Icon(Icons.email_outlined),
+                              ),
                               keyboardType: TextInputType.emailAddress,
                               initialValue: userData.user.userEmail,
+                              textInputAction: TextInputAction.next,
+                              focusNode: _emailFocus,
+                              onFieldSubmitted: (_) {
+                                FocusScope.of(context).requestFocus(_password);
+                              },
                               validator: (value) {
                                 if (value!.isEmpty || !value.contains('@')) {
                                   return 'Invalid email!';
@@ -202,25 +245,46 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                 _updateData['email_update'] = value!;
                               },
                             ),
-                            TextFormField(
-                              decoration: const InputDecoration(
-                                  labelText: 'New or Same Password'),
-                              obscureText: true,
-                              controller: _passwordController,
-                              validator: (value) {
-                                if (value!.isEmpty || value.length < 5) {
-                                  return 'Password is too short!';
-                                }
-                                return null;
-                              },
-                              onSaved: (value) {
-                                _updateData['password_update'] = value!;
-                              },
+                            const SizedBox(height: 5),
+
+                            PasswordFieldUpdate(
+                              submit: () => _submit(),
+                              password: _password,
+                              confirmPassword: _confirmPassword,
+                              passwordController: _passwordController,
+                              updateData: _updateData,
                             ),
+                            const SizedBox(height: 5),
+
+                            // TextFormField(
+                            //   decoration: const InputDecoration(
+                            //       labelText: 'New or Same Password'),
+                            //   obscureText: true,
+                            //   controller: _passwordController,
+                            //   textInputAction: TextInputAction.next,
+                            //   focusNode: _password,
+                            //   onFieldSubmitted: (_) {
+                            //     FocusScope.of(context)
+                            //         .requestFocus(_confirmPassword);
+                            //   },
+                            //   validator: (value) {
+                            //     if (value!.isEmpty || value.length < 5) {
+                            //       return 'Password is too short!';
+                            //     }
+                            //     return null;
+                            //   },
+                            //   onSaved: (value) {
+                            //     _updateData['password_update'] = value!;
+                            //   },
+                            // ),
                             TextFormField(
                               decoration: const InputDecoration(
-                                  labelText: 'Confirm Password'),
+                                hintText: 'Confirm Password',
+                                prefixIcon: Icon(Icons.lock_open),
+                              ),
                               obscureText: true,
+                              textInputAction: TextInputAction.done,
+                              focusNode: _confirmPassword,
                               validator: (value) {
                                 if (value != _passwordController.text) {
                                   return 'Passwords do not match!';
@@ -231,10 +295,14 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                 _updateData['password_confirmation_update'] =
                                     value!;
                               },
+                              onFieldSubmitted: (_) {
+                                _submit();
+                              },
                             ),
-                            const SizedBox(height: 20),
+
+                            const SizedBox(height: 25),
                             if (_isLoading)
-                              const CircularProgressIndicator()
+                              const Center(child: CircularProgressIndicator())
                             else
                               ElevatedButton(
                                 onPressed: _submit,
@@ -258,6 +326,68 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
           ),
         ],
       ),
+    );
+  }
+}
+
+class PasswordFieldUpdate extends StatefulWidget {
+  const PasswordFieldUpdate({
+    super.key,
+    required FocusNode password,
+    required FocusNode confirmPassword,
+    required TextEditingController passwordController,
+    required Map<String, String> updateData,
+    required this.submit,
+  })  : _password = password,
+        _confirmPassword = confirmPassword,
+        _passwordController = passwordController,
+        _updateData = updateData;
+  final Function submit;
+  final FocusNode _password;
+  final FocusNode _confirmPassword;
+  final TextEditingController _passwordController;
+  final Map<String, String> _updateData;
+
+  @override
+  State<PasswordFieldUpdate> createState() => _PasswordFieldState();
+}
+
+class _PasswordFieldState extends State<PasswordFieldUpdate> {
+  late bool isHiden = true;
+  @override
+  Widget build(BuildContext context) {
+    return TextFormField(
+      decoration: InputDecoration(
+        // labelText: 'Password',
+        hintText: 'New or Same Password',
+        prefixIcon: const Icon(Icons.lock_open),
+        suffixIcon: IconButton(
+          onPressed: () {
+            setState(() {
+              isHiden = !isHiden;
+            });
+          },
+          icon: isHiden
+              ? const Icon(Icons.visibility_outlined)
+              : const Icon(Icons.visibility_off_outlined),
+        ),
+      ),
+      obscureText: isHiden,
+      controller: widget._passwordController,
+      textInputAction: TextInputAction.next,
+      focusNode: widget._password,
+      onFieldSubmitted: (_) {
+        FocusScope.of(context).requestFocus(widget._confirmPassword);
+      },
+      validator: (value) {
+        if (value!.isEmpty || value.length < 5) {
+          return 'Password is too short!';
+        }
+        return null;
+      },
+      onSaved: (value) {
+        widget._updateData['password_update'] = value!;
+      },
     );
   }
 }

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../routes/lesson_screen.dart';
+import '../routes/screens.dart';
 
 class LessonGetStarted extends StatelessWidget {
   final String? lesName;

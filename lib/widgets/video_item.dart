@@ -33,7 +33,8 @@ class _VideoItemState extends State<VideoItem> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   const Icon(Icons.play_circle_outline),
-                  Text(widget.vidName),
+                  const SizedBox(width: 10),
+                  Expanded(child: Text(widget.vidName)),
                   Icon(_expanded ? Icons.expand_more : Icons.chevron_right),
                 ],
               ),
@@ -46,17 +47,22 @@ class _VideoItemState extends State<VideoItem> {
               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
               height: 220,
               child: Center(
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(15),
-                  child: Image.asset(
-                    'assets/images/line.jpg',
-                    height: 200,
-                    width: 450,
-                    fit: BoxFit.cover,
-                  ),
+                child: Stack(
+                  children: [
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(15),
+                      child: Image.asset(
+                        'assets/images/line.jpg',
+                        height: 200,
+                        width: 450,
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+                    Center(child: Text(widget.vidFile)),
+                  ],
                 ),
               ),
-            )
+            ),
         ],
       ),
     );

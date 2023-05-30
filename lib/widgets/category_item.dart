@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
-import '../providers/constants.dart';
-import '../routes/category_details_screen.dart';
+import '../providers/providers.dart';
+import '../routes/screens.dart';
 
 class CategoryItem extends StatelessWidget {
   final int? catId;

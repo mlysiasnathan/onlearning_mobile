@@ -1,120 +1,126 @@
 import 'dart:convert';
-import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
-import 'package:shared_preferences/shared_preferences.dart';
 
-import '../models/api_response.dart';
-import '../models/lesson.dart';
-import './constants.dart';
+import '../models/models.dart';
+import './providers.dart';
 
 class Lessons with ChangeNotifier {
-  Future<String> getToken() async {
-    SharedPreferences pref = await SharedPreferences.getInstance();
-    return pref.getString('token') ?? '';
-  }
+  final String authToken;
+  Lessons(this.authToken);
+
+  List<dynamic> courses = [];
+  Lesson course = Lesson(
+    lesId: 0,
+    lesName: '',
+    catId: 0,
+    lesPrice: 0,
+    lesImg: '',
+    lesContent: '',
+    createdAt: '',
+    updatedAt: '',
+  );
+  Map<String, dynamic> lessonData = {};
+  List<dynamic> videos = [];
+  List<dynamic> documents = [];
 
 // all courses
-  Future<ApiResponse> getCourses(String catName) async {
-    ApiResponse apiResponse = ApiResponse();
+  Future<void> getCourses(String catName) async {
     try {
-      final token = await getToken();
-
       final response = await http.get(
-        Uri.parse(baseURL + '/category/$catName'),
+        Uri.parse('$baseURL/category/$catName'),
         headers: {
           'Accept': 'application/json',
-          'Authorization': 'Bearer $token',
+          'Authorization': 'Bearer $authToken',
         },
       );
       switch (response.statusCode) {
         case 200:
-          apiResponse.data = jsonDecode(response.body)['courses']
+          courses = jsonDecode(response.body)['courses']
               .map((lesson) => Lesson.fromJson(lesson))
               .toList() as List<dynamic>;
           break;
         case 401:
-          apiResponse.errors = unauthorized;
-          break;
+          throw (unauthorized);
         default:
-          apiResponse.errors = somethingWentWrong;
-          break;
+          throw (somethingWentWrong);
       }
+      notifyListeners();
     } catch (error) {
-      apiResponse.errors = serverError;
+      rethrow;
     }
-    return apiResponse;
   }
 
 // all course's details
-  Future<ApiResponse> getCourseDetails(String catName, String lesName) async {
-    ApiResponse apiResponse = ApiResponse();
+  Future<void> getCourseDetails(String catName, String lesName) async {
     try {
-      final token = await getToken();
       final response = await http.get(
-        Uri.parse(baseURL + '/category/$catName/course/$lesName'),
+        Uri.parse('$baseURL/category/$catName/course/$lesName'),
         headers: {
           'Accept': 'application/json',
-          'Authorization': 'Bearer $token',
+          'Authorization': 'Bearer $authToken',
         },
       );
       switch (response.statusCode) {
         case 200:
-          apiResponse.data = jsonDecode(response.body);
+          lessonData = jsonDecode(response.body) as Map<String, dynamic>;
+          videos = lessonData['videos']
+              .map((video) => Video.fromJson(video))
+              .toList() as List<dynamic>;
+          documents = lessonData['documents']
+              .map((document) => Document.fromJson(document))
+              .toList() as List<dynamic>;
           break;
         case 401:
-          apiResponse.errors = unauthorized;
-          break;
+          throw (unauthorized);
         default:
-          apiResponse.errors = somethingWentWrong;
-          break;
+          throw (somethingWentWrong);
       }
+      notifyListeners();
     } catch (error) {
-      apiResponse.errors = serverError;
+      rethrow;
     }
-    return apiResponse;
   }
 
-// add course
-  Future<ApiResponse> addCategory(
-      String lesName, int lesPrice, String lesContent, File lesImg) async {
-    ApiResponse apiResponse = ApiResponse();
-    final token = await getToken();
-    try {
-      final response = await http.post(
-        Uri.parse(addCategoryURL),
-        headers: {
-          'Accept': 'application/json',
-          'Authorization': 'Bearer $token'
-        },
-        body: {
-          'name': lesName,
-          'price': lesPrice,
-          'description': lesContent,
-          'image': lesImg,
-        },
-      );
-      switch (response.statusCode) {
-        case 200:
-          apiResponse.data = jsonDecode(response.body);
-          break;
-        case 422:
-          final errors = jsonDecode(response.body)['errors'];
-          apiResponse.errors = errors[errors.keys.elementAt(0)][0];
-          break;
-        case 401:
-          apiResponse.errors = unauthorized;
-          break;
-        default:
-          apiResponse.errors = somethingWentWrong;
-          break;
-      }
-    } catch (error) {
-      apiResponse.errors = serverError;
-    }
-    return apiResponse;
-  }
+// // add course
+//   Future<ApiResponse> addCategory(
+//       String lesName, int lesPrice, String lesContent, File lesImg) async {
+//     ApiResponse apiResponse = ApiResponse();
+//     try {
+//       final response = await http.post(
+//         Uri.parse(addCategoryURL),
+//         headers: {
+//           'Accept': 'application/json',
+//           'Authorization': 'Bearer $authToken'
+//         },
+//         body: {
+//           'name': lesName,
+//           'price': lesPrice,
+//           'description': lesContent,
+//           'image': lesImg,
+//         },
+//       );
+//       switch (response.statusCode) {
+//         case 200:
+//           apiResponse.data = jsonDecode(response.body);
+//           break;
+//         case 422:
+//           final errors = jsonDecode(response.body)['errors'];
+//           apiResponse.errors = errors[errors.keys.elementAt(0)][0];
+//           break;
+//         case 401:
+//           apiResponse.errors = unauthorized;
+//           break;
+//         default:
+//           apiResponse.errors = somethingWentWrong;
+//           break;
+//       }
+//     } catch (error) {
+//       apiResponse.errors = serverError;
+//     }
+//     return apiResponse;
+//   }
 
 // edit Category
 // Future<ApiResponse> editCategory(

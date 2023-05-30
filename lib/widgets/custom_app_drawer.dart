@@ -1,17 +1,23 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../providers/constants.dart';
-import '../providers/users_provider.dart';
-import '../routes/auth_screen.dart';
-import '../routes/edit_profile_screen.dart';
+import '../providers/providers.dart';
+import '../routes/screens.dart';
 
 class CustomDrawer extends StatelessWidget {
   const CustomDrawer({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final userData = Provider.of<Users>(context);
+    final userData = Provider.of<Auth>(context);
+    void goBack() {
+      Timer(Duration.zero, () {
+        Navigator.of(context).pushReplacementNamed('/');
+      });
+    }
+
     return Drawer(
       child: ListView(
         children: <Widget>[
@@ -22,7 +28,7 @@ class CustomDrawer extends StatelessWidget {
             accountEmail: Text('${userData.user.userEmail}'),
             currentAccountPicture: CircleAvatar(
               backgroundImage: Image.network(
-                '${assetsURL}/storage/${userData.user.image!}',
+                '$assetsURL/storage/${userData.user.image!}',
                 fit: BoxFit.cover,
               ).image,
               backgroundColor: Colors.white,
@@ -31,23 +37,44 @@ class CustomDrawer extends StatelessWidget {
           ListTile(
               title: const Text('Edit profile'),
               onTap: () {
-                Navigator.pop(context);
-                Navigator.of(context).pushNamed(EditProfileScreen.routeName);
+                // Navigator.pop(context);
+                Navigator.of(context)
+                    .popAndPushNamed(EditProfileScreen.routeName);
               }),
+          const Divider(color: Color.fromRGBO(90, 90, 243, 1)),
           ListTile(
             title: const Text('Current course'),
             onTap: () {},
           ),
+          const Divider(color: Color.fromRGBO(90, 90, 243, 1)),
           ListTile(
-            title: const Text('Logout', style: TextStyle(color: Colors.red)),
+            title: const Text(
+              'Logout',
+              style: TextStyle(color: Colors.red, fontWeight: FontWeight.w900),
+            ),
             onTap: () {
-              userData.logout().then(
-                    (value) => Navigator.of(context).pushAndRemoveUntil(
-                        MaterialPageRoute(
-                          builder: (context) => const AuthScreen(),
-                        ),
-                        (route) => false),
-                  );
+              Navigator.pop(context);
+              ScaffoldMessenger.of(context).hideCurrentSnackBar();
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  showCloseIcon: true,
+                  closeIconColor: Colors.white,
+                  content: const Text('LOGOUT    Are you sure ?'),
+                  duration: const Duration(seconds: 10),
+                  behavior: SnackBarBehavior.floating,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(15),
+                  ),
+                  action: SnackBarAction(
+                    textColor: Colors.red,
+                    label: 'Yes',
+                    onPressed: () {
+                      userData.logout();
+                      goBack();
+                    },
+                  ),
+                ),
+              );
             },
           ),
         ],

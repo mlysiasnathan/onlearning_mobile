@@ -2,7 +2,7 @@ import 'package:app/widgets/lesson_get_started.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
-import '../providers/constants.dart';
+import '../providers/providers.dart';
 
 class LessonItem extends StatelessWidget {
   final int? lesId;

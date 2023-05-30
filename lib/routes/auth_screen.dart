@@ -2,13 +2,9 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
-import '../providers/users_provider.dart';
-import '../models/http_exceptions.dart';
-import '../models/user.dart';
-import '../models/api_response.dart';
-import './categories_screen.dart';
+import '../providers/providers.dart';
+import '../models/models.dart';
 
 enum AuthMode { Signup, Login }
 
@@ -20,29 +16,27 @@ class AuthScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final deviceSize = MediaQuery.of(context).size;
-    // final transformConfig = Matrix4.rotationZ(-8 * pi / 180);
-    // transformConfig.translate(-10.0);
+
     return Scaffold(
-      // resizeToAvoidBottomInset: false,
       body: Stack(
         children: <Widget>[
           Container(
-            decoration: const BoxDecoration(
+            decoration: BoxDecoration(
               gradient: LinearGradient(
                 colors: [
                   Colors.white,
                   Colors.white,
-                  Color.fromRGBO(90, 90, 243, 1),
-                  Color.fromRGBO(90, 90, 243, 1)
+                  const Color.fromRGBO(90, 90, 243, 1).withOpacity(0.6),
+                  const Color.fromRGBO(90, 90, 243, 1)
                 ],
                 begin: Alignment.topCenter,
                 end: Alignment.bottomRight,
-                stops: [0.1, 0.6, 0.9, 1],
+                stops: const [0.1, 0.6, 0.9, 1],
               ),
             ),
           ),
           SingleChildScrollView(
-            child: Container(
+            child: SizedBox(
               height: deviceSize.height,
               width: deviceSize.width,
               child: Column(
@@ -51,12 +45,10 @@ class AuthScreen extends StatelessWidget {
                 children: <Widget>[
                   Flexible(
                     child: Container(
-                      // margin: const EdgeInsets.only(bottom: 10.0),
                       padding: const EdgeInsets.symmetric(
-                          vertical: 8.0, horizontal: 80.0),
+                          vertical: 18.0, horizontal: 70.0),
                       transform: Matrix4.rotationZ(-8 * pi / 180)
-                        ..translate(-10.0),
-                      // ..translate(-10.0),
+                        ..translate(-0.0),
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(20),
                         color: const Color.fromRGBO(90, 90, 243, 1),
@@ -73,7 +65,7 @@ class AuthScreen extends StatelessWidget {
                         style: TextStyle(
                           fontSize: 30,
                           color: Colors.white,
-                          fontWeight: FontWeight.normal,
+                          fontWeight: FontWeight.w800,
                         ),
                       ),
                     ),
@@ -113,31 +105,44 @@ class _AuthCardState extends State<AuthCard>
   final _passwordController = TextEditingController();
   late AnimationController _controller;
   late Animation<Size> _heightAnimation;
-  void _showErrorDialog(String message) {
-    showDialog<void>(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        title: const Text('An error occurred !'),
+  // void _showErrorDialog(String message) {
+  //   showDialog<void>(
+  //     context: context,
+  //     builder: (ctx) => AlertDialog(
+  //       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
+  //       title: const Text(
+  //         'An error occurred !',
+  //         style: TextStyle(color: Colors.red),
+  //       ),
+  //       content: Text(message),
+  //       actionsAlignment: MainAxisAlignment.center,
+  //       actions: [
+  //         TextButton(
+  //           onPressed: () {
+  //             Navigator.pop(ctx);
+  //           },
+  //           child: const Text('Close'),
+  //         ),
+  //       ],
+  //     ),
+  //   );
+  // }
+
+  void _showErrorToast(String message) {
+    ScaffoldMessenger.of(context).hideCurrentSnackBar();
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        closeIconColor: Colors.white,
+        showCloseIcon: true,
+        backgroundColor: Colors.red,
         content: Text(message),
-        actions: [
-          TextButton(
-            onPressed: () {
-              Navigator.pop(ctx);
-            },
-            child: const Text('Close'),
-          ),
-        ],
+        duration: const Duration(seconds: 10),
+        behavior: SnackBarBehavior.floating,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(15),
+        ),
       ),
     );
-  }
-
-  void _savedAndRedirect(User user) async {
-    SharedPreferences pref = await SharedPreferences.getInstance();
-    await pref.setString('token', user.token ?? '');
-    await pref.setInt('user_id', user.userId ?? 0);
-    Navigator.of(context).pushAndRemoveUntil(
-        MaterialPageRoute(builder: (context) => const CategoriesScreen()),
-        (route) => false);
   }
 
   void _switchAuthMode() {
@@ -173,12 +178,19 @@ class _AuthCardState extends State<AuthCard>
   @override
   void dispose() {
     _controller.dispose();
+    _emailFocus.dispose();
+    _password.dispose();
+    _confirmPassword.dispose();
     super.dispose();
   }
 
+  final _emailFocus = FocusNode();
+  final _password = FocusNode();
+  final _confirmPassword = FocusNode();
+
   @override
   Widget build(BuildContext context) {
-    final userData = Provider.of<Users>(context);
+    final userData = Provider.of<Auth>(context, listen: false);
     Future<void> _submit() async {
       if (!_formKey.currentState!.validate()) {
         // Invalid!
@@ -190,49 +202,17 @@ class _AuthCardState extends State<AuthCard>
       });
       try {
         if (_authMode == AuthMode.Login) {
-          // Log user in
-          ApiResponse response =
-              await userData.login(_authData['email']!, _authData['password']!);
-          if (response.errors == null) {
-            _savedAndRedirect(response.data as User);
-          } else {
-            _showErrorDialog(response.errors.toString());
-          }
-          // await Provider.of<Auth>(context, listen: false)
-          //     .login(_authData['email']!, _authData['password']!);
+          await userData.login(_authData['email']!, _authData['password']!);
         } else {
-          // Sign user up
-          ApiResponse response = await userData.register(
-              _authData['user_name']!,
-              _authData['email']!,
+          await userData.register(_authData['user_name']!, _authData['email']!,
               _authData['password']!);
-          if (response.errors == null) {
-            _savedAndRedirect(response.data as User);
-          } else {
-            _showErrorDialog(response.errors.toString());
-          }
-          // await Provider.of<Auth>(context, listen: false)
-          //     .signup(_authData['email']!, _authData['password']!);
         }
       } on MyPersonalHttpException catch (error) {
-        var errorMessage = 'Authentication failed !';
-        if (error.toString().contains('EMAIL_EXISTS')) {
-          errorMessage = 'This email is already taken !';
-        } else if (error.toString().contains('INVALID_EMAIL')) {
-          errorMessage = 'This email is invalid !';
-        } else if (error.toString().contains('WEAK_PASSWORD')) {
-          errorMessage = 'This password is too weak !';
-        } else if (error.toString().contains('EMAIL_NOT_FOUND')) {
-          errorMessage = 'Could not find a user with this email !';
-        } else if (error.toString().contains('INVALID_PASSWORD')) {
-          errorMessage = 'This password is invalid !';
-        }
-        _showErrorDialog(errorMessage);
+        var errorMessage = 'Could not Authenticate you. Try later !';
+        _showErrorToast(errorMessage);
       } catch (error) {
-        const errorMessage = 'Could not Authenticate you. Try later !';
-        _showErrorDialog(errorMessage);
+        _showErrorToast(error.toString());
       }
-
       setState(() {
         _isLoading = false;
       });
@@ -246,17 +226,29 @@ class _AuthCardState extends State<AuthCard>
           minHeight: _heightAnimation
               .value.height), // _authMode == AuthMode.Signup ? 320 : 260),
       width: deviceSize.width * 0.95,
-      padding: const EdgeInsets.all(16.0),
+      padding: EdgeInsets.only(
+          bottom: MediaQuery.of(context).viewInsets.bottom + 16,
+          right: 16,
+          left: 16,
+          top: _authMode == AuthMode.Login ? 90 : 16),
       child: Form(
         key: _formKey,
         child: SingleChildScrollView(
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
             children: <Widget>[
               if (_authMode == AuthMode.Signup)
                 TextFormField(
                   style: const TextStyle(color: Colors.black),
                   enabled: _authMode == AuthMode.Signup,
-                  decoration: const InputDecoration(labelText: 'Names :'),
+                  decoration: const InputDecoration(
+                    hintText: 'Names :',
+                    prefixIcon: Icon(Icons.person),
+                  ),
+                  onFieldSubmitted: (_) {
+                    FocusScope.of(context).requestFocus(_emailFocus);
+                  },
+                  textInputAction: TextInputAction.next,
                   validator: _authMode == AuthMode.Signup
                       ? (value) {
                           if (value!.isEmpty) {
@@ -271,7 +263,16 @@ class _AuthCardState extends State<AuthCard>
               TextFormField(
                 style: const TextStyle(color: Colors.black),
                 initialValue: '@test.com',
-                decoration: const InputDecoration(labelText: 'email address'),
+                decoration: const InputDecoration(
+                  // labelText: 'Email address',
+                  hintText: 'Email address',
+                  prefixIcon: Icon(Icons.email_outlined),
+                ),
+                focusNode: _emailFocus,
+                onFieldSubmitted: (_) {
+                  FocusScope.of(context).requestFocus(_password);
+                },
+                textInputAction: TextInputAction.next,
                 keyboardType: TextInputType.emailAddress,
                 validator: (value) {
                   if (value!.isEmpty || !value.contains('@')) {
@@ -283,26 +284,25 @@ class _AuthCardState extends State<AuthCard>
                   _authData['email'] = value!;
                 },
               ),
-              TextFormField(
-                style: const TextStyle(color: Colors.black),
-                decoration: const InputDecoration(labelText: 'Password'),
-                obscureText: true,
-                controller: _passwordController,
-                validator: (value) {
-                  if (value!.isEmpty || value.length < 5) {
-                    return 'Password is too short!';
-                  }
-                },
-                onSaved: (value) {
-                  _authData['password'] = value!;
-                },
+              if (_authMode == AuthMode.Login) const SizedBox(height: 30),
+              PasswordField(
+                submit: () => _submit(),
+                password: _password,
+                authMode: _authMode,
+                confirmPassword: _confirmPassword,
+                passwordController: _passwordController,
+                authData: _authData,
               ),
               if (_authMode == AuthMode.Signup)
                 TextFormField(
                   style: const TextStyle(color: Colors.black),
                   enabled: _authMode == AuthMode.Signup,
-                  decoration:
-                      const InputDecoration(labelText: 'Confirm Password'),
+                  decoration: const InputDecoration(
+                    hintText: 'Confirm Password',
+                    prefixIcon: Icon(Icons.lock_open),
+                  ),
+                  focusNode: _confirmPassword,
+                  textInputAction: TextInputAction.done,
                   obscureText: true,
                   validator: _authMode == AuthMode.Signup
                       ? (value) {
@@ -314,18 +314,16 @@ class _AuthCardState extends State<AuthCard>
                   onSaved: (value) {
                     _authData['password_confirmation'] = value!;
                   },
+                  onFieldSubmitted: (_) {
+                    _submit();
+                  },
                 ),
               const SizedBox(height: 20),
               if (_isLoading)
-                const CircularProgressIndicator()
+                const Center(child: CircularProgressIndicator())
               else
                 ElevatedButton(
                   onPressed: _submit,
-                  // style: ButtonStyle(
-                  //   backgroundColor: MaterialStateColor.resolveWith(
-                  //     (states) => const Color.fromRGBO(90, 90, 243, 1),
-                  //   ),
-                  // ),
                   child: Text(
                       _authMode == AuthMode.Login ? 'Login now' : 'Signup now'),
                 ),
@@ -338,6 +336,75 @@ class _AuthCardState extends State<AuthCard>
           ),
         ),
       ),
+    );
+  }
+}
+
+class PasswordField extends StatefulWidget {
+  const PasswordField({
+    super.key,
+    required FocusNode password,
+    required AuthMode authMode,
+    required FocusNode confirmPassword,
+    required TextEditingController passwordController,
+    required Map<String, String> authData,
+    required this.submit,
+  })  : _password = password,
+        _authMode = authMode,
+        _confirmPassword = confirmPassword,
+        _passwordController = passwordController,
+        _authData = authData;
+  final Function submit;
+  final FocusNode _password;
+  final AuthMode _authMode;
+  final FocusNode _confirmPassword;
+  final TextEditingController _passwordController;
+  final Map<String, String> _authData;
+
+  @override
+  State<PasswordField> createState() => _PasswordFieldState();
+}
+
+class _PasswordFieldState extends State<PasswordField> {
+  late bool isHiden = true;
+  @override
+  Widget build(BuildContext context) {
+    return TextFormField(
+      style: const TextStyle(color: Colors.black),
+      decoration: InputDecoration(
+        // labelText: 'Password',
+        hintText: 'Password',
+        prefixIcon: const Icon(Icons.lock_open),
+        suffixIcon: IconButton(
+          onPressed: () {
+            setState(() {
+              isHiden = !isHiden;
+            });
+          },
+          icon: isHiden
+              ? const Icon(Icons.visibility_outlined)
+              : const Icon(Icons.visibility_off_outlined),
+        ),
+      ),
+      focusNode: widget._password,
+      textInputAction: widget._authMode == AuthMode.Login
+          ? TextInputAction.done
+          : TextInputAction.next,
+      onFieldSubmitted: (_) {
+        widget._authMode == AuthMode.Login
+            ? widget.submit()
+            : FocusScope.of(context).requestFocus(widget._confirmPassword);
+      },
+      obscureText: isHiden,
+      controller: widget._passwordController,
+      validator: (value) {
+        if (value!.isEmpty || value.length < 5) {
+          return 'Password is too short!';
+        }
+      },
+      onSaved: (value) {
+        widget._authData['password'] = value!;
+      },
     );
   }
 }
