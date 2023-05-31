@@ -15,6 +15,11 @@ class _VideoItemState extends State<VideoItem> {
   @override
   Widget build(BuildContext context) {
     return Card(
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(13),
+        side: const BorderSide(color: Colors.blue, width: 1),
+      ),
+      elevation: 5,
       margin: const EdgeInsets.all(10),
       child: Column(
         children: [
@@ -24,10 +29,9 @@ class _VideoItemState extends State<VideoItem> {
                 _expanded = !_expanded;
               });
             },
-            child: Container(
+            child: AnimatedContainer(
+              duration: const Duration(milliseconds: 500),
               height: 60,
-              decoration:
-                  BoxDecoration(borderRadius: BorderRadius.circular(30)),
               padding: const EdgeInsets.all(13.0),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -40,29 +44,29 @@ class _VideoItemState extends State<VideoItem> {
               ),
             ),
           ),
-          if (_expanded)
-            Container(
-              decoration:
-                  BoxDecoration(borderRadius: BorderRadius.circular(30)),
-              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-              height: 220,
-              child: Center(
-                child: Stack(
-                  children: [
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(15),
-                      child: Image.asset(
-                        'assets/images/line.jpg',
-                        height: 200,
-                        width: 450,
-                        fit: BoxFit.cover,
-                      ),
+          // if (_expanded)
+          AnimatedContainer(
+            duration: const Duration(milliseconds: 500),
+            decoration: BoxDecoration(borderRadius: BorderRadius.circular(30)),
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+            height: _expanded ? 220 : 0,
+            child: Center(
+              child: Stack(
+                children: [
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(15),
+                    child: Image.asset(
+                      'assets/images/line.jpg',
+                      height: 200,
+                      width: 450,
+                      fit: BoxFit.cover,
                     ),
-                    Center(child: Text(widget.vidFile)),
-                  ],
-                ),
+                  ),
+                  Center(child: Text(widget.vidFile)),
+                ],
               ),
             ),
+          ),
         ],
       ),
     );

@@ -6,7 +6,7 @@ import 'package:provider/provider.dart';
 import '../providers/providers.dart';
 import '../models/models.dart';
 
-enum AuthMode { Signup, Login }
+enum AuthMode { signup, login }
 
 class AuthScreen extends StatelessWidget {
   static const routeName = '/auth';
@@ -24,14 +24,14 @@ class AuthScreen extends StatelessWidget {
             decoration: BoxDecoration(
               gradient: LinearGradient(
                 colors: [
-                  Colors.white,
-                  Colors.white,
+                  const Color.fromRGBO(90, 90, 243, 1),
                   const Color.fromRGBO(90, 90, 243, 1).withOpacity(0.6),
-                  const Color.fromRGBO(90, 90, 243, 1)
+                  Colors.white,
+                  Colors.white,
                 ],
                 begin: Alignment.topCenter,
-                end: Alignment.bottomRight,
-                stops: const [0.1, 0.6, 0.9, 1],
+                end: Alignment.bottomCenter,
+                stops: const [0.0, 0.2, 0.4, 1],
               ),
             ),
           ),
@@ -40,7 +40,7 @@ class AuthScreen extends StatelessWidget {
               height: deviceSize.height,
               width: deviceSize.width,
               child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.end,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: <Widget>[
                   Flexible(
@@ -74,6 +74,7 @@ class AuthScreen extends StatelessWidget {
                     flex: deviceSize.width > 600 ? 2 : 1,
                     child: const AuthCard(),
                   ),
+                  const SizedBox(height: 100),
                 ],
               ),
             ),
@@ -85,16 +86,16 @@ class AuthScreen extends StatelessWidget {
 }
 
 class AuthCard extends StatefulWidget {
-  const AuthCard({super.key});
+  const AuthCard({Key? key}) : super(key: key);
 
   @override
-  _AuthCardState createState() => _AuthCardState();
+  State<AuthCard> createState() => _AuthCardState();
 }
 
 class _AuthCardState extends State<AuthCard>
     with SingleTickerProviderStateMixin {
   final GlobalKey<FormState> _formKey = GlobalKey();
-  AuthMode _authMode = AuthMode.Login;
+  AuthMode _authMode = AuthMode.login;
   final Map<String, String> _authData = {
     'user_name': '',
     'email': '',
@@ -103,30 +104,6 @@ class _AuthCardState extends State<AuthCard>
   };
   var _isLoading = false;
   final _passwordController = TextEditingController();
-  late AnimationController _controller;
-  late Animation<Size> _heightAnimation;
-  // void _showErrorDialog(String message) {
-  //   showDialog<void>(
-  //     context: context,
-  //     builder: (ctx) => AlertDialog(
-  //       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
-  //       title: const Text(
-  //         'An error occurred !',
-  //         style: TextStyle(color: Colors.red),
-  //       ),
-  //       content: Text(message),
-  //       actionsAlignment: MainAxisAlignment.center,
-  //       actions: [
-  //         TextButton(
-  //           onPressed: () {
-  //             Navigator.pop(ctx);
-  //           },
-  //           child: const Text('Close'),
-  //         ),
-  //       ],
-  //     ),
-  //   );
-  // }
 
   void _showErrorToast(String message) {
     ScaffoldMessenger.of(context).hideCurrentSnackBar();
@@ -146,38 +123,19 @@ class _AuthCardState extends State<AuthCard>
   }
 
   void _switchAuthMode() {
-    if (_authMode == AuthMode.Login) {
+    if (_authMode == AuthMode.login) {
       setState(() {
-        _authMode = AuthMode.Signup;
+        _authMode = AuthMode.signup;
       });
-      _controller.forward();
     } else {
       setState(() {
-        _authMode = AuthMode.Login;
+        _authMode = AuthMode.login;
       });
-      _controller.reverse();
     }
   }
 
   @override
-  void initState() {
-    _controller = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 300),
-    );
-    _heightAnimation = Tween<Size>(
-      begin: const Size(double.infinity, 350),
-      end: const Size(double.infinity, 500),
-    ).animate(
-      CurvedAnimation(parent: _controller, curve: Curves.fastOutSlowIn),
-    );
-    _heightAnimation.addListener(() => setState(() {}));
-    super.initState();
-  }
-
-  @override
   void dispose() {
-    _controller.dispose();
     _emailFocus.dispose();
     _password.dispose();
     _confirmPassword.dispose();
@@ -191,9 +149,8 @@ class _AuthCardState extends State<AuthCard>
   @override
   Widget build(BuildContext context) {
     final userData = Provider.of<Auth>(context, listen: false);
-    Future<void> _submit() async {
+    Future<void> submit() async {
       if (!_formKey.currentState!.validate()) {
-        // Invalid!
         return;
       }
       _formKey.currentState?.save();
@@ -201,13 +158,13 @@ class _AuthCardState extends State<AuthCard>
         _isLoading = true;
       });
       try {
-        if (_authMode == AuthMode.Login) {
+        if (_authMode == AuthMode.login) {
           await userData.login(_authData['email']!, _authData['password']!);
         } else {
           await userData.register(_authData['user_name']!, _authData['email']!,
               _authData['password']!);
         }
-      } on MyPersonalHttpException catch (error) {
+      } on MyPersonalHttpException catch (_) {
         var errorMessage = 'Could not Authenticate you. Try later !';
         _showErrorToast(errorMessage);
       } catch (error) {
@@ -220,27 +177,33 @@ class _AuthCardState extends State<AuthCard>
 
     final deviceSize = MediaQuery.of(context).size;
     return AnimatedContainer(
-      duration: const Duration(milliseconds: 300),
-      height: _authMode == AuthMode.Signup ? 500 : 350,
+      duration: const Duration(milliseconds: 500),
+      height: _authMode == AuthMode.signup
+          ? deviceSize.height * 0.60
+          : deviceSize.height * 0.40,
       constraints: BoxConstraints(
-          minHeight: _heightAnimation
-              .value.height), // _authMode == AuthMode.Signup ? 320 : 260),
+        minHeight: _authMode == AuthMode.signup
+            ? deviceSize.height * 0.60
+            : deviceSize.height * 0.40,
+      ), // _authMode == AuthMode.signup ? 320 : 260),
       width: deviceSize.width * 0.95,
       padding: EdgeInsets.only(
-          bottom: MediaQuery.of(context).viewInsets.bottom + 16,
-          right: 16,
-          left: 16,
-          top: _authMode == AuthMode.Login ? 90 : 16),
+        bottom: 16,
+        right: 16,
+        left: 16,
+        top: _authMode == AuthMode.login ? 50 : 16,
+      ),
       child: Form(
         key: _formKey,
         child: SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: <Widget>[
-              if (_authMode == AuthMode.Signup)
+              if (_authMode == AuthMode.signup)
                 TextFormField(
+                  key: UniqueKey(),
                   style: const TextStyle(color: Colors.black),
-                  enabled: _authMode == AuthMode.Signup,
+                  enabled: _authMode == AuthMode.signup,
                   decoration: const InputDecoration(
                     hintText: 'Names :',
                     prefixIcon: Icon(Icons.person),
@@ -249,7 +212,7 @@ class _AuthCardState extends State<AuthCard>
                     FocusScope.of(context).requestFocus(_emailFocus);
                   },
                   textInputAction: TextInputAction.next,
-                  validator: _authMode == AuthMode.Signup
+                  validator: _authMode == AuthMode.signup
                       ? (value) {
                           if (value!.isEmpty) {
                             return 'Fill your names here!';
@@ -261,6 +224,7 @@ class _AuthCardState extends State<AuthCard>
                   },
                 ),
               TextFormField(
+                key: UniqueKey(),
                 style: const TextStyle(color: Colors.black),
                 initialValue: '@test.com',
                 decoration: const InputDecoration(
@@ -284,19 +248,20 @@ class _AuthCardState extends State<AuthCard>
                   _authData['email'] = value!;
                 },
               ),
-              if (_authMode == AuthMode.Login) const SizedBox(height: 30),
+              if (_authMode == AuthMode.login) const SizedBox(height: 30),
               PasswordField(
-                submit: () => _submit(),
+                submit: () => submit(),
                 password: _password,
                 authMode: _authMode,
                 confirmPassword: _confirmPassword,
                 passwordController: _passwordController,
                 authData: _authData,
               ),
-              if (_authMode == AuthMode.Signup)
+              if (_authMode == AuthMode.signup)
                 TextFormField(
+                  key: UniqueKey(),
                   style: const TextStyle(color: Colors.black),
-                  enabled: _authMode == AuthMode.Signup,
+                  enabled: _authMode == AuthMode.signup,
                   decoration: const InputDecoration(
                     hintText: 'Confirm Password',
                     prefixIcon: Icon(Icons.lock_open),
@@ -304,7 +269,7 @@ class _AuthCardState extends State<AuthCard>
                   focusNode: _confirmPassword,
                   textInputAction: TextInputAction.done,
                   obscureText: true,
-                  validator: _authMode == AuthMode.Signup
+                  validator: _authMode == AuthMode.signup
                       ? (value) {
                           if (value != _passwordController.text) {
                             return 'Passwords do not match!';
@@ -315,7 +280,7 @@ class _AuthCardState extends State<AuthCard>
                     _authData['password_confirmation'] = value!;
                   },
                   onFieldSubmitted: (_) {
-                    _submit();
+                    submit();
                   },
                 ),
               const SizedBox(height: 20),
@@ -323,14 +288,32 @@ class _AuthCardState extends State<AuthCard>
                 const Center(child: CircularProgressIndicator())
               else
                 ElevatedButton(
-                  onPressed: _submit,
+                  onPressed: submit,
                   child: Text(
-                      _authMode == AuthMode.Login ? 'Login now' : 'Signup now'),
+                      _authMode == AuthMode.login ? 'Login now' : 'Signup now'),
                 ),
               TextButton(
                 onPressed: _switchAuthMode,
-                child: Text(
-                    '${_authMode == AuthMode.Login ? 'Signup' : 'Login'} instead !'),
+                child: RichText(
+                  text: TextSpan(
+                    children: [
+                      TextSpan(
+                        text: _authMode == AuthMode.login
+                            ? 'Don\'t have an account ? '
+                            : 'Do you have an account ? ',
+                        style: const TextStyle(
+                          color: Colors.black,
+                        ),
+                      ),
+                      TextSpan(
+                        text: _authMode == AuthMode.login ? 'SignUp' : 'Login',
+                        style: const TextStyle(
+                          color: Color.fromRGBO(90, 90, 243, 1),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
               ),
             ],
           ),
@@ -366,7 +349,7 @@ class PasswordField extends StatefulWidget {
 }
 
 class _PasswordFieldState extends State<PasswordField> {
-  late bool isHiden = true;
+  late bool isHidden = true;
   @override
   Widget build(BuildContext context) {
     return TextFormField(
@@ -378,24 +361,24 @@ class _PasswordFieldState extends State<PasswordField> {
         suffixIcon: IconButton(
           onPressed: () {
             setState(() {
-              isHiden = !isHiden;
+              isHidden = !isHidden;
             });
           },
-          icon: isHiden
+          icon: isHidden
               ? const Icon(Icons.visibility_outlined)
               : const Icon(Icons.visibility_off_outlined),
         ),
       ),
       focusNode: widget._password,
-      textInputAction: widget._authMode == AuthMode.Login
+      textInputAction: widget._authMode == AuthMode.login
           ? TextInputAction.done
           : TextInputAction.next,
       onFieldSubmitted: (_) {
-        widget._authMode == AuthMode.Login
+        widget._authMode == AuthMode.login
             ? widget.submit()
             : FocusScope.of(context).requestFocus(widget._confirmPassword);
       },
-      obscureText: isHiden,
+      obscureText: isHidden,
       controller: widget._passwordController,
       validator: (value) {
         if (value!.isEmpty || value.length < 5) {

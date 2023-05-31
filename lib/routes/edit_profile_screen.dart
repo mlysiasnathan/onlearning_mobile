@@ -139,189 +139,183 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       body: CustomScrollView(
         slivers: <Widget>[
           const CustomAppBar(title: 'Profile'),
-          SliverFillRemaining(
-            child: SingleChildScrollView(
-              physics: const NeverScrollableScrollPhysics(),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  Card(
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(15),
-                    ),
-                    elevation: 8,
-                    margin: const EdgeInsets.all(10),
-                    child: Column(
-                      children: <Widget>[
-                        Stack(
-                          children: <Widget>[
-                            ClipRRect(
-                              borderRadius: const BorderRadius.only(
-                                topLeft: Radius.circular(15),
-                                topRight: Radius.circular(15),
-                              ),
-                              child: _storedImage == null
-                                  ? Image.network(
-                                      '$assetsURL/storage/${userData.user.image!}',
-                                      height: 400,
-                                      width: double.infinity,
-                                      fit: BoxFit.cover,
-                                    )
-                                  : Image.file(
-                                      _storedImage!,
-                                      height: 400,
-                                      width: double.infinity,
-                                      fit: BoxFit.cover,
-                                    ),
-                            ),
-                            TextButton.icon(
-                              label: const Text('Take picture'),
-                              onPressed: _takePicture,
-                              icon: const Icon(Icons.camera),
-                            )
-                          ],
-                        ),
-                        const Padding(
-                          padding: EdgeInsets.all(19),
-                          child: Text('Student'),
-                        ),
-                      ],
-                    ),
+          SliverList(
+            delegate: SliverChildListDelegate(
+              [
+                Card(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(15),
                   ),
-                  Padding(
-                    padding: EdgeInsets.only(
-                      left: 15.0,
-                      right: 15,
-                      bottom: MediaQuery.of(context).viewInsets.bottom + 15,
-                    ),
-                    child: Form(
-                      key: _formKey,
-                      child: SingleChildScrollView(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.stretch,
-                          children: <Widget>[
-                            TextFormField(
-                              decoration: const InputDecoration(
-                                hintText: 'Names :',
-                                prefixIcon: Icon(Icons.person),
-                              ),
-                              validator: (value) {
-                                if (value!.isEmpty) {
-                                  return 'Fill your names here!';
-                                }
-                                return null;
-                              },
-                              onFieldSubmitted: (_) {
-                                FocusScope.of(context)
-                                    .requestFocus(_emailFocus);
-                              },
-                              textInputAction: TextInputAction.next,
-                              initialValue: userData.user.userName,
-                              onSaved: (value) {
-                                _updateData['user_name_update'] = value!;
-                              },
+                  elevation: 8,
+                  margin: const EdgeInsets.all(10),
+                  child: Column(
+                    children: <Widget>[
+                      Stack(
+                        children: <Widget>[
+                          ClipRRect(
+                            borderRadius: const BorderRadius.only(
+                              topLeft: Radius.circular(15),
+                              topRight: Radius.circular(15),
                             ),
-                            const SizedBox(height: 5),
-                            TextFormField(
-                              decoration: const InputDecoration(
-                                // labelText: 'Email address',
-                                hintText: 'Email address',
-                                prefixIcon: Icon(Icons.email_outlined),
-                              ),
-                              keyboardType: TextInputType.emailAddress,
-                              initialValue: userData.user.userEmail,
-                              textInputAction: TextInputAction.next,
-                              focusNode: _emailFocus,
-                              onFieldSubmitted: (_) {
-                                FocusScope.of(context).requestFocus(_password);
-                              },
-                              validator: (value) {
-                                if (value!.isEmpty || !value.contains('@')) {
-                                  return 'Invalid email!';
-                                }
-                                return null;
-                              },
-                              onSaved: (value) {
-                                _updateData['email_update'] = value!;
-                              },
-                            ),
-                            const SizedBox(height: 5),
-
-                            PasswordFieldUpdate(
-                              submit: () => _submit(),
-                              password: _password,
-                              confirmPassword: _confirmPassword,
-                              passwordController: _passwordController,
-                              updateData: _updateData,
-                            ),
-                            const SizedBox(height: 5),
-
-                            // TextFormField(
-                            //   decoration: const InputDecoration(
-                            //       labelText: 'New or Same Password'),
-                            //   obscureText: true,
-                            //   controller: _passwordController,
-                            //   textInputAction: TextInputAction.next,
-                            //   focusNode: _password,
-                            //   onFieldSubmitted: (_) {
-                            //     FocusScope.of(context)
-                            //         .requestFocus(_confirmPassword);
-                            //   },
-                            //   validator: (value) {
-                            //     if (value!.isEmpty || value.length < 5) {
-                            //       return 'Password is too short!';
-                            //     }
-                            //     return null;
-                            //   },
-                            //   onSaved: (value) {
-                            //     _updateData['password_update'] = value!;
-                            //   },
-                            // ),
-                            TextFormField(
-                              decoration: const InputDecoration(
-                                hintText: 'Confirm Password',
-                                prefixIcon: Icon(Icons.lock_open),
-                              ),
-                              obscureText: true,
-                              textInputAction: TextInputAction.done,
-                              focusNode: _confirmPassword,
-                              validator: (value) {
-                                if (value != _passwordController.text) {
-                                  return 'Passwords do not match!';
-                                }
-                                return null;
-                              },
-                              onSaved: (value) {
-                                _updateData['password_confirmation_update'] =
-                                    value!;
-                              },
-                              onFieldSubmitted: (_) {
-                                _submit();
-                              },
-                            ),
-
-                            const SizedBox(height: 25),
-                            if (_isLoading)
-                              const Center(child: CircularProgressIndicator())
-                            else
-                              ElevatedButton(
-                                onPressed: _submit,
-                                style: ButtonStyle(
-                                  backgroundColor:
-                                      MaterialStateColor.resolveWith(
-                                    (states) =>
-                                        const Color.fromRGBO(90, 90, 243, 1),
+                            child: _storedImage == null
+                                ? Image.network(
+                                    '$assetsURL/storage/${userData.user.image!}',
+                                    height: 400,
+                                    width: double.infinity,
+                                    fit: BoxFit.cover,
+                                  )
+                                : Image.file(
+                                    _storedImage!,
+                                    height: 400,
+                                    width: double.infinity,
+                                    fit: BoxFit.cover,
                                   ),
+                          ),
+                          TextButton.icon(
+                            label: const Text('Take picture'),
+                            onPressed: _takePicture,
+                            icon: const Icon(Icons.camera),
+                          )
+                        ],
+                      ),
+                      const Padding(
+                        padding: EdgeInsets.all(19),
+                        child: Text('Student'),
+                      ),
+                    ],
+                  ),
+                ),
+                Padding(
+                  padding: EdgeInsets.only(
+                    left: 15.0,
+                    right: 15,
+                    bottom: MediaQuery.of(context).viewInsets.bottom + 15,
+                  ),
+                  child: Form(
+                    key: _formKey,
+                    child: SingleChildScrollView(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: <Widget>[
+                          TextFormField(
+                            decoration: const InputDecoration(
+                              hintText: 'Names :',
+                              prefixIcon: Icon(Icons.person),
+                            ),
+                            validator: (value) {
+                              if (value!.isEmpty) {
+                                return 'Fill your names here!';
+                              }
+                              return null;
+                            },
+                            onFieldSubmitted: (_) {
+                              FocusScope.of(context).requestFocus(_emailFocus);
+                            },
+                            textInputAction: TextInputAction.next,
+                            initialValue: userData.user.userName,
+                            onSaved: (value) {
+                              _updateData['user_name_update'] = value!;
+                            },
+                          ),
+                          const SizedBox(height: 5),
+                          TextFormField(
+                            decoration: const InputDecoration(
+                              // labelText: 'Email address',
+                              hintText: 'Email address',
+                              prefixIcon: Icon(Icons.email_outlined),
+                            ),
+                            keyboardType: TextInputType.emailAddress,
+                            initialValue: userData.user.userEmail,
+                            textInputAction: TextInputAction.next,
+                            focusNode: _emailFocus,
+                            onFieldSubmitted: (_) {
+                              FocusScope.of(context).requestFocus(_password);
+                            },
+                            validator: (value) {
+                              if (value!.isEmpty || !value.contains('@')) {
+                                return 'Invalid email!';
+                              }
+                              return null;
+                            },
+                            onSaved: (value) {
+                              _updateData['email_update'] = value!;
+                            },
+                          ),
+                          const SizedBox(height: 5),
+
+                          PasswordFieldUpdate(
+                            submit: () => _submit(),
+                            password: _password,
+                            confirmPassword: _confirmPassword,
+                            passwordController: _passwordController,
+                            updateData: _updateData,
+                          ),
+                          const SizedBox(height: 5),
+
+                          // TextFormField(
+                          //   decoration: const InputDecoration(
+                          //       labelText: 'New or Same Password'),
+                          //   obscureText: true,
+                          //   controller: _passwordController,
+                          //   textInputAction: TextInputAction.next,
+                          //   focusNode: _password,
+                          //   onFieldSubmitted: (_) {
+                          //     FocusScope.of(context)
+                          //         .requestFocus(_confirmPassword);
+                          //   },
+                          //   validator: (value) {
+                          //     if (value!.isEmpty || value.length < 5) {
+                          //       return 'Password is too short!';
+                          //     }
+                          //     return null;
+                          //   },
+                          //   onSaved: (value) {
+                          //     _updateData['password_update'] = value!;
+                          //   },
+                          // ),
+                          TextFormField(
+                            decoration: const InputDecoration(
+                              hintText: 'Confirm Password',
+                              prefixIcon: Icon(Icons.lock_open),
+                            ),
+                            obscureText: true,
+                            textInputAction: TextInputAction.done,
+                            focusNode: _confirmPassword,
+                            validator: (value) {
+                              if (value != _passwordController.text) {
+                                return 'Passwords do not match!';
+                              }
+                              return null;
+                            },
+                            onSaved: (value) {
+                              _updateData['password_confirmation_update'] =
+                                  value!;
+                            },
+                            onFieldSubmitted: (_) {
+                              _submit();
+                            },
+                          ),
+
+                          const SizedBox(height: 25),
+                          if (_isLoading)
+                            const Center(child: CircularProgressIndicator())
+                          else
+                            ElevatedButton(
+                              onPressed: _submit,
+                              style: ButtonStyle(
+                                backgroundColor: MaterialStateColor.resolveWith(
+                                  (states) =>
+                                      const Color.fromRGBO(90, 90, 243, 1),
                                 ),
-                                child: const Text('Edit Profile'),
                               ),
-                          ],
-                        ),
+                              child: const Text('Edit Profile'),
+                            ),
+                        ],
                       ),
                     ),
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
           ),
         ],
