@@ -10,6 +10,7 @@ class CustomAppBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SliverAppBar(
+      // shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
       elevation: 7,
       shadowColor: const Color.fromRGBO(90, 90, 243, 1),
       backgroundColor: const Color.fromRGBO(241, 241, 241, 0.9450980392156862),

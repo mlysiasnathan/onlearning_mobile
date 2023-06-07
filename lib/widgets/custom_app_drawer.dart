@@ -27,20 +27,48 @@ class CustomDrawer extends StatelessWidget {
             accountName: Text('${userData.user.userName}'),
             accountEmail: Text('${userData.user.userEmail}'),
             currentAccountPicture: CircleAvatar(
-              backgroundImage: Image.network(
-                '$assetsURL/storage/${userData.user.image!}',
-                fit: BoxFit.cover,
-              ).image,
+              backgroundImage: userData.user.userName == 'Student' &&
+                      userData.user.userEmail == 'unkown@test.com' &&
+                      userData.user.userId == 0
+                  ? Image.asset(
+                      userData.user.image.toString(),
+                      fit: BoxFit.cover,
+                    ).image
+                  : Image.network(
+                      '$assetsURL/storage/${userData.user.image!}',
+                      fit: BoxFit.cover,
+                    ).image,
               backgroundColor: Colors.white,
             ),
           ),
           ListTile(
-              title: const Text('Edit profile'),
-              onTap: () {
-                // Navigator.pop(context);
+            title: const Text('Edit profile'),
+            onTap: () {
+              // Navigator.pop(context);
+              if (userData.user.userName == 'Student' &&
+                  userData.user.userEmail == 'unkown@test.com' &&
+                  userData.user.userId == 0) {
+                Navigator.pop(context);
+                ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    showCloseIcon: true,
+                    closeIconColor: Colors.white,
+                    backgroundColor: Colors.red,
+                    content: const Text('You cannot edit without network'),
+                    duration: const Duration(seconds: 10),
+                    behavior: SnackBarBehavior.floating,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(15),
+                    ),
+                  ),
+                );
+              } else {
                 Navigator.of(context)
                     .popAndPushNamed(EditProfileScreen.routeName);
-              }),
+              }
+            },
+          ),
           const Divider(color: Color.fromRGBO(90, 90, 243, 1)),
           ListTile(
             title: const Text('Current course'),
@@ -55,26 +83,44 @@ class CustomDrawer extends StatelessWidget {
             onTap: () {
               Navigator.pop(context);
               ScaffoldMessenger.of(context).hideCurrentSnackBar();
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  showCloseIcon: true,
-                  closeIconColor: Colors.white,
-                  content: const Text('LOGOUT    Are you sure ?'),
-                  duration: const Duration(seconds: 10),
-                  behavior: SnackBarBehavior.floating,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(15),
+              if (userData.user.userName == 'Student' &&
+                  userData.user.userEmail == 'unkown@test.com' &&
+                  userData.user.userId == 0) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    showCloseIcon: true,
+                    closeIconColor: Colors.white,
+                    backgroundColor: Colors.red,
+                    content: const Text('You cannot logout without network'),
+                    duration: const Duration(seconds: 10),
+                    behavior: SnackBarBehavior.floating,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(15),
+                    ),
                   ),
-                  action: SnackBarAction(
-                    textColor: Colors.red,
-                    label: 'Yes',
-                    onPressed: () {
-                      userData.logout();
-                      goBack();
-                    },
+                );
+              } else {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    showCloseIcon: true,
+                    closeIconColor: Colors.white,
+                    content: const Text('LOGOUT    Are you sure ?'),
+                    duration: const Duration(seconds: 10),
+                    behavior: SnackBarBehavior.floating,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(15),
+                    ),
+                    action: SnackBarAction(
+                      textColor: Colors.red,
+                      label: 'Yes',
+                      onPressed: () {
+                        userData.logout();
+                        goBack();
+                      },
+                    ),
                   ),
-                ),
-              );
+                );
+              }
             },
           ),
         ],

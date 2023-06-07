@@ -11,7 +11,12 @@ import '../providers/providers.dart';
 import '../models/models.dart';
 
 class Auth with ChangeNotifier {
-  late User user;
+  User user = User(
+    userId: 0,
+    userName: 'Student',
+    userEmail: 'unkown@test.com',
+    image: 'assets/images/unknown.JPG',
+  );
   String? _token;
 
   bool get isAuth {

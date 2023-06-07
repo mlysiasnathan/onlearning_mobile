@@ -16,7 +16,6 @@ class AuthScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final deviceSize = MediaQuery.of(context).size;
-
     return Scaffold(
       body: Stack(
         children: <Widget>[
@@ -191,7 +190,11 @@ class _AuthCardState extends State<AuthCard>
         bottom: 16,
         right: 16,
         left: 16,
-        top: _authMode == AuthMode.login ? 50 : 16,
+        top: _authMode == AuthMode.login
+            ? deviceSize.width <= 360
+                ? 10
+                : 50
+            : 16,
       ),
       child: Form(
         key: _formKey,
@@ -205,8 +208,11 @@ class _AuthCardState extends State<AuthCard>
                   style: const TextStyle(color: Colors.black),
                   enabled: _authMode == AuthMode.signup,
                   decoration: const InputDecoration(
-                    hintText: 'Names :',
-                    prefixIcon: Icon(Icons.person),
+                    hintText: 'Enter your names :',
+                    prefixIcon: Icon(
+                      Icons.person,
+                      size: 17,
+                    ),
                   ),
                   onFieldSubmitted: (_) {
                     FocusScope.of(context).requestFocus(_emailFocus);
@@ -229,8 +235,11 @@ class _AuthCardState extends State<AuthCard>
                 initialValue: '@test.com',
                 decoration: const InputDecoration(
                   // labelText: 'Email address',
-                  hintText: 'Email address',
-                  prefixIcon: Icon(Icons.email_outlined),
+                  hintText: 'Enter your email :',
+                  prefixIcon: Icon(
+                    Icons.email_outlined,
+                    size: 17,
+                  ),
                 ),
                 focusNode: _emailFocus,
                 onFieldSubmitted: (_) {
@@ -264,7 +273,10 @@ class _AuthCardState extends State<AuthCard>
                   enabled: _authMode == AuthMode.signup,
                   decoration: const InputDecoration(
                     hintText: 'Confirm Password',
-                    prefixIcon: Icon(Icons.lock_open),
+                    prefixIcon: Icon(
+                      Icons.lock_open,
+                      size: 17,
+                    ),
                   ),
                   focusNode: _confirmPassword,
                   textInputAction: TextInputAction.done,
@@ -299,16 +311,20 @@ class _AuthCardState extends State<AuthCard>
                     children: [
                       TextSpan(
                         text: _authMode == AuthMode.login
-                            ? 'Don\'t have an account ? '
-                            : 'Do you have an account ? ',
+                            ? 'Not a member ? '
+                            : 'Already a member ? ',
                         style: const TextStyle(
                           color: Colors.black,
+                          fontFamily: 'Comfortaa',
                         ),
                       ),
                       TextSpan(
-                        text: _authMode == AuthMode.login ? 'SignUp' : 'Login',
+                        text: _authMode == AuthMode.login
+                            ? 'Signup Now'
+                            : 'Login Now',
                         style: const TextStyle(
                           color: Color.fromRGBO(90, 90, 243, 1),
+                          fontFamily: 'Comfortaa',
                         ),
                       ),
                     ],
@@ -356,7 +372,7 @@ class _PasswordFieldState extends State<PasswordField> {
       style: const TextStyle(color: Colors.black),
       decoration: InputDecoration(
         // labelText: 'Password',
-        hintText: 'Password',
+        hintText: 'Enter your Password :',
         prefixIcon: const Icon(Icons.lock_open),
         suffixIcon: IconButton(
           onPressed: () {
@@ -365,8 +381,14 @@ class _PasswordFieldState extends State<PasswordField> {
             });
           },
           icon: isHidden
-              ? const Icon(Icons.visibility_outlined)
-              : const Icon(Icons.visibility_off_outlined),
+              ? const Icon(
+                  Icons.visibility_off_outlined,
+                  size: 17,
+                )
+              : const Icon(
+                  Icons.visibility_outlined,
+                  size: 17,
+                ),
         ),
       ),
       focusNode: widget._password,
@@ -382,7 +404,7 @@ class _PasswordFieldState extends State<PasswordField> {
       controller: widget._passwordController,
       validator: (value) {
         if (value!.isEmpty || value.length < 5) {
-          return 'Password is too short!';
+          return 'Password must be at least 3 characters';
         }
       },
       onSaved: (value) {
