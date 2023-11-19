@@ -15,7 +15,7 @@ class Auth with ChangeNotifier {
     userId: 0,
     userName: 'Student',
     userEmail: 'unkown@test.com',
-    image: 'assets/images/unknown.JPG',
+    image: 'assets/images/unknown.png',
   );
   String? _token;
 

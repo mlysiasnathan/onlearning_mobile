@@ -6,11 +6,13 @@ class LessonGetStarted extends StatelessWidget {
   final String? lesName;
   final String? lesImg;
   final String? catName;
+  final List<dynamic> tags;
   const LessonGetStarted({
     Key? key,
     required this.lesName,
     required this.lesImg,
     required this.catName,
+    required this.tags,
   }) : super(key: key);
 
   @override
@@ -30,19 +32,17 @@ class LessonGetStarted extends StatelessWidget {
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(20),
             ),
-            title: const Text(
-              'Pre-requis:',
-            ),
+            title: const Text('Course requirements:'),
             content: SizedBox(
               height: MediaQuery.of(context).size.height * 0.3,
               width: MediaQuery.of(context).size.width,
-              child: ListView(
-                children: const [
-                  Text('-You may know CSS'),
-                  Text('-You may know Html'),
-                  Text('-You may know Scss'),
-                ],
-              ),
+              child: ListView.builder(
+                  padding: const EdgeInsets.all(19),
+                  itemCount: tags.length,
+                  itemBuilder: (ctx, index) {
+                    return Text(
+                        '- You should know ${tags[index]['tag_name'].toUpperCase()}');
+                  }),
             ),
             actions: [
               OutlinedButton(
@@ -51,6 +51,11 @@ class LessonGetStarted extends StatelessWidget {
                 },
                 child: const Text(
                   'Close',
+                  style: TextStyle(
+                    fontSize: 15,
+                    fontWeight: FontWeight.bold,
+                    letterSpacing: 3,
+                  ),
                 ),
               ),
               ElevatedButton(
@@ -67,6 +72,11 @@ class LessonGetStarted extends StatelessWidget {
                 },
                 child: const Text(
                   'Start',
+                  style: TextStyle(
+                    fontSize: 15,
+                    fontWeight: FontWeight.bold,
+                    letterSpacing: 3,
+                  ),
                 ),
               ),
             ],

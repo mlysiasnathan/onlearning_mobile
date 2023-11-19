@@ -85,6 +85,8 @@ class _CategoryDetailsScreenState extends State<CategoryDetailsScreen> {
                 } else {
                   return SliverList(
                     delegate: SliverChildBuilderDelegate(
+                      addAutomaticKeepAlives: false,
+                      addRepaintBoundaries: false,
                       (context, index) {
                         return Consumer<Lessons>(
                           builder: (ctx, coursesData, child) {
@@ -96,6 +98,7 @@ class _CategoryDetailsScreenState extends State<CategoryDetailsScreen> {
                               lesPrice: coursesData.courses[index].lesPrice,
                               createdAt: coursesData.courses[index].createdAt,
                               catName: catName,
+                              tags: coursesData.courses[index].tags,
                             );
                           },
                         );

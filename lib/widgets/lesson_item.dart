@@ -12,6 +12,7 @@ class LessonItem extends StatelessWidget {
   final int? lesPrice;
   final String? createdAt;
   final String? catName;
+  final List<dynamic>? tags;
 
   const LessonItem({
     super.key,
@@ -22,6 +23,7 @@ class LessonItem extends StatelessWidget {
     this.lesPrice,
     this.createdAt,
     this.catName,
+    this.tags,
   });
 
   @override
@@ -72,18 +74,23 @@ class LessonItem extends StatelessWidget {
                     horizontal: 20,
                     vertical: 5,
                   ),
-                  child: Text(
+                  child:
+                      // FittedBox(
+                      //   child:
+                      Text(
                     lesName!.toUpperCase(),
                     style: const TextStyle(
                       fontSize: 26,
                       color: Colors.white,
                       fontWeight: FontWeight.bold,
                     ),
+                    maxLines: 1,
                     softWrap: true,
-                    overflow: TextOverflow.fade,
+                    overflow: TextOverflow.ellipsis,
                   ),
                 ),
               ),
+              // ),
               Positioned(
                 top: 110,
                 left: 10,
@@ -99,11 +106,12 @@ class LessonItem extends StatelessWidget {
                   child: Text(
                     lesContent!,
                     style: const TextStyle(
-                        fontSize: 17,
+                        fontSize: 14,
                         color: Colors.white,
                         fontWeight: FontWeight.bold),
                     softWrap: true,
-                    overflow: TextOverflow.fade,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
                   ),
                 ),
               ),
@@ -128,6 +136,9 @@ class LessonItem extends StatelessWidget {
                           createdAt.toString(),
                         ),
                       ),
+                      maxLines: 1,
+                      softWrap: true,
+                      overflow: TextOverflow.ellipsis,
                     ),
                   ],
                 ),
@@ -152,6 +163,7 @@ class LessonItem extends StatelessWidget {
                       lesName: lesName,
                       lesImg: lesImg,
                       catName: catName,
+                      tags: tags ?? [],
                     ),
                   ],
                 ),

@@ -74,7 +74,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         duration: const Duration(seconds: 10),
         behavior: SnackBarBehavior.floating,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(15),
+          borderRadius: BorderRadius.circular(30),
         ),
       ),
     );
@@ -141,6 +141,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
           const CustomAppBar(title: 'Profile'),
           SliverList(
             delegate: SliverChildListDelegate(
+              addAutomaticKeepAlives: false,
+              addRepaintBoundaries: false,
               [
                 Card(
                   shape: RoundedRectangleBorder(

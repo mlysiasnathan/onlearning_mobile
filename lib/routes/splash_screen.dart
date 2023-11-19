@@ -56,9 +56,7 @@ class SplashScreen extends StatelessWidget {
                 ),
               ),
             ),
-            const Center(
-              child: CircularProgressIndicator(color: Colors.white),
-            ),
+            const Center(child: CircularProgressIndicator(color: Colors.white)),
           ],
         ),
       ),

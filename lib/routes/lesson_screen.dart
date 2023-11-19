@@ -81,6 +81,8 @@ class _LessonScreenState extends State<LessonScreen> {
                 } else {
                   return SliverList(
                     delegate: SliverChildListDelegate(
+                      addAutomaticKeepAlives: false,
+                      addRepaintBoundaries: false,
                       [
                         Consumer<Lessons>(
                           builder: (ctx, coursesData, child) => coursesData

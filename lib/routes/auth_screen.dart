@@ -115,7 +115,7 @@ class _AuthCardState extends State<AuthCard>
         duration: const Duration(seconds: 10),
         behavior: SnackBarBehavior.floating,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(15),
+          borderRadius: BorderRadius.circular(30),
         ),
       ),
     );

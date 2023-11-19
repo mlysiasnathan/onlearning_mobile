@@ -80,6 +80,8 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
                 } else {
                   return SliverList(
                     delegate: SliverChildBuilderDelegate(
+                      addAutomaticKeepAlives: false,
+                      addRepaintBoundaries: false,
                       (context, index) => Consumer<Categories>(
                         builder: (ctx, categoriesData, child) => CategoryItem(
                           catId: categoriesData.categories[index].catId,

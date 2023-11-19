@@ -32,11 +32,13 @@ class CustomAppBar extends StatelessWidget {
       ],
       flexibleSpace: FlexibleSpaceBar(
         centerTitle: true,
-        title: Text(
-          title,
-          style: const TextStyle(
-            fontWeight: FontWeight.w900,
-            color: Color.fromRGBO(90, 90, 243, 1),
+        title: FittedBox(
+          child: Text(
+            title,
+            style: const TextStyle(
+              fontWeight: FontWeight.w900,
+              color: Color.fromRGBO(90, 90, 243, 1),
+            ),
           ),
         ),
         background: image == null

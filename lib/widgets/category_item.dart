@@ -43,10 +43,7 @@ class CategoryItem extends StatelessWidget {
             Stack(
               children: <Widget>[
                 ClipRRect(
-                  borderRadius: const BorderRadius.only(
-                    topLeft: Radius.circular(15),
-                    topRight: Radius.circular(15),
-                  ),
+                  borderRadius: BorderRadius.circular(15),
                   child: Hero(
                     tag: catImg!,
                     child: FadeInImage(
@@ -58,9 +55,12 @@ class CategoryItem extends StatelessWidget {
                       placeholder: const AssetImage(
                         'assets/images/placeholder.PNG',
                       ),
-                      image: NetworkImage(
+                      image:
+                          // precacheImage(
+                          NetworkImage(
                         '$assetsURL/storage/${catImg!}',
                       ),
+                      // context),
                     ),
                   ),
                 ),
@@ -78,14 +78,17 @@ class CategoryItem extends StatelessWidget {
                       horizontal: 20,
                       vertical: 5,
                     ),
-                    child: Text(
-                      catName!.toUpperCase(),
-                      style: const TextStyle(
-                          fontSize: 30,
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold),
-                      softWrap: true,
-                      overflow: TextOverflow.fade,
+                    child: FittedBox(
+                      child: Text(
+                        catName!.toUpperCase(),
+                        style: const TextStyle(
+                            fontSize: 20,
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold),
+                        softWrap: true,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
                     ),
                   ),
                 ),
@@ -104,11 +107,12 @@ class CategoryItem extends StatelessWidget {
                     child: Text(
                       catDescription!,
                       style: const TextStyle(
-                          fontSize: 17,
+                          fontSize: 14,
                           color: Colors.white,
                           fontWeight: FontWeight.bold),
                       softWrap: true,
-                      overflow: TextOverflow.fade,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
                     ),
                   ),
                 ),
@@ -129,12 +133,12 @@ class CategoryItem extends StatelessWidget {
                         ),
                       )}',
                       style: const TextStyle(
-                        fontSize: 17,
+                        fontSize: 12,
                         color: Color.fromRGBO(90, 90, 243, 0.7607843137254902),
                         fontWeight: FontWeight.bold,
                       ),
                       softWrap: true,
-                      overflow: TextOverflow.fade,
+                      overflow: TextOverflow.ellipsis,
                     ),
                   ),
                 ),
