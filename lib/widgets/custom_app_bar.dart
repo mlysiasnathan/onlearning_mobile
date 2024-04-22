@@ -9,10 +9,12 @@ class CustomAppBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
+    final Color primaryColor = Theme.of(context).primaryColor;
     return SliverAppBar(
       // shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
       elevation: 7,
-      shadowColor: const Color.fromRGBO(90, 90, 243, 1),
+      shadowColor:primaryColor,
       backgroundColor: const Color.fromRGBO(241, 241, 241, 0.9450980392156862),
       pinned: true,
       snap: false,
@@ -23,9 +25,9 @@ class CustomAppBar extends StatelessWidget {
         Builder(
           builder: (context) => IconButton(
             onPressed: () => Scaffold.of(context).openEndDrawer(),
-            icon: const Icon(
+            icon:  Icon(
               Icons.menu,
-              color: Color.fromRGBO(90, 90, 243, 1),
+              color: primaryColor,
             ),
           ),
         ),
@@ -35,9 +37,9 @@ class CustomAppBar extends StatelessWidget {
         title: FittedBox(
           child: Text(
             title,
-            style: const TextStyle(
+            style:  TextStyle(
               fontWeight: FontWeight.w900,
-              color: Color.fromRGBO(90, 90, 243, 1),
+              color: primaryColor,
             ),
           ),
         ),

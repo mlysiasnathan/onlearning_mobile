@@ -28,6 +28,7 @@ class LessonItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final Color primaryColor = Theme.of(context).primaryColor;
     return Card(
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(15),
@@ -66,8 +67,7 @@ class LessonItem extends StatelessWidget {
                 child: Container(
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(10),
-                    color:
-                        const Color.fromRGBO(90, 90, 243, 0.7607843137254902),
+                    color:primaryColor,
                   ),
                   width: 300,
                   padding: const EdgeInsets.symmetric(
@@ -98,7 +98,7 @@ class LessonItem extends StatelessWidget {
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(10),
                     color:
-                        const Color.fromRGBO(90, 90, 243, 0.7607843137254902),
+                    primaryColor,
                   ),
                   width: 300,
                   padding:
@@ -125,9 +125,9 @@ class LessonItem extends StatelessWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: <Widget>[
-                    const Icon(
+                     Icon(
                       Icons.schedule_outlined,
-                      color: Color.fromRGBO(90, 90, 243, 0.7607843137254902),
+                      color: primaryColor,
                     ),
                     const SizedBox(width: 5),
                     Text(
@@ -144,9 +144,9 @@ class LessonItem extends StatelessWidget {
                 ),
                 Row(
                   children: <Widget>[
-                    const Icon(
+                     Icon(
                       Icons.monetization_on,
-                      color: Color.fromRGBO(90, 90, 243, 0.7607843137254902),
+                      color: primaryColor,
                     ),
                     const SizedBox(width: 5),
                     Text('$lesPrice'),
@@ -154,9 +154,9 @@ class LessonItem extends StatelessWidget {
                 ),
                 Row(
                   children: <Widget>[
-                    const Icon(
+                     Icon(
                       Icons.chevron_right,
-                      color: Color.fromRGBO(90, 90, 243, 0.7607843137254902),
+                      color: primaryColor,
                     ),
                     const SizedBox(width: 5),
                     LessonGetStarted(

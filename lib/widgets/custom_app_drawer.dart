@@ -11,6 +11,8 @@ class CustomDrawer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final Color primaryColor = Theme.of(context).primaryColor;
+
     final userData = Provider.of<Auth>(context);
     void goBack() {
       Timer(Duration.zero, () {
@@ -23,7 +25,7 @@ class CustomDrawer extends StatelessWidget {
         children: <Widget>[
           UserAccountsDrawerHeader(
             decoration:
-                const BoxDecoration(color: Color.fromRGBO(90, 90, 243, 1)),
+                 BoxDecoration(color: primaryColor),
             accountName: Text('${userData.user.userName}'),
             accountEmail: Text('${userData.user.userEmail}'),
             currentAccountPicture: CircleAvatar(
@@ -69,12 +71,12 @@ class CustomDrawer extends StatelessWidget {
               }
             },
           ),
-          const Divider(color: Color.fromRGBO(90, 90, 243, 1)),
+           Divider(color: primaryColor),
           ListTile(
             title: const Text('Current course'),
             onTap: () {},
           ),
-          const Divider(color: Color.fromRGBO(90, 90, 243, 1)),
+          Divider(color: primaryColor),
           ListTile(
             title: const Text(
               'Logout',

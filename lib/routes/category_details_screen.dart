@@ -17,6 +17,7 @@ class CategoryDetailsScreen extends StatefulWidget {
 class _CategoryDetailsScreenState extends State<CategoryDetailsScreen> {
   @override
   Widget build(BuildContext context) {
+    final Color primaryColor = Theme.of(context).primaryColor;
     final catInfo =
         ModalRoute.of(context)?.settings.arguments as Map<String, String?>;
     final catName = catInfo['catName'];
@@ -24,7 +25,7 @@ class _CategoryDetailsScreenState extends State<CategoryDetailsScreen> {
     final coursesData = Provider.of<Lessons>(context, listen: false);
     return Scaffold(
       floatingActionButton: FloatingActionButton(
-        backgroundColor: const Color.fromRGBO(90, 90, 243, 1),
+        backgroundColor: primaryColor,
         onPressed: () {
           setState(() {});
         },

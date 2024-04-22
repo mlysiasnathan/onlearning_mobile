@@ -147,6 +147,7 @@ class _AuthCardState extends State<AuthCard>
 
   @override
   Widget build(BuildContext context) {
+    final Color primaryColor = Theme.of(context).primaryColor;
     final userData = Provider.of<Auth>(context, listen: false);
     Future<void> submit() async {
       if (!_formKey.currentState!.validate()) {
@@ -315,16 +316,14 @@ class _AuthCardState extends State<AuthCard>
                             : 'Already a member ? ',
                         style: const TextStyle(
                           color: Colors.black,
-                          fontFamily: 'Comfortaa',
                         ),
                       ),
                       TextSpan(
                         text: _authMode == AuthMode.login
                             ? 'Signup Now'
                             : 'Login Now',
-                        style: const TextStyle(
-                          color: Color.fromRGBO(90, 90, 243, 1),
-                          fontFamily: 'Comfortaa',
+                        style:  TextStyle(
+                          color: primaryColor
                         ),
                       ),
                     ],

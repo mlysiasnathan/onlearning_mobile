@@ -93,6 +93,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final Color primaryColor = Theme.of(context).primaryColor;
     final userData = Provider.of<Auth>(context);
     void goBack() {
       Timer(Duration.zero, () {
@@ -307,7 +308,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                               style: ButtonStyle(
                                 backgroundColor: MaterialStateColor.resolveWith(
                                   (states) =>
-                                      const Color.fromRGBO(90, 90, 243, 1),
+    primaryColor,
                                 ),
                               ),
                               child: const Text('Edit Profile'),

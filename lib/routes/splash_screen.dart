@@ -7,10 +7,11 @@ class SplashScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final Color primaryColor = Theme.of(context).primaryColor;
     final mediaQuery = MediaQuery.of(context).size;
     return Scaffold(
       body: Container(
-        color: const Color.fromRGBO(90, 90, 243, 1),
+        color: primaryColor,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -31,11 +32,11 @@ class SplashScreen extends StatelessWidget {
                   )
                 ],
               ),
-              child: const Text(
+              child:  Text(
                 'Onlearning',
                 style: TextStyle(
                   fontSize: 30,
-                  color: Color.fromRGBO(90, 90, 243, 1),
+                  color: primaryColor,
                   fontWeight: FontWeight.w800,
                 ),
               ),
@@ -56,7 +57,11 @@ class SplashScreen extends StatelessWidget {
                 ),
               ),
             ),
-            const Center(child: CircularProgressIndicator(color: Colors.white)),
+            LinearProgressIndicator(
+              color: primaryColor,
+              borderRadius: BorderRadius.circular(30),
+            ),
+            // const Center(child: CircularProgressIndicator(color: Colors.white)),
           ],
         ),
       ),

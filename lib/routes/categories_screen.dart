@@ -17,10 +17,11 @@ class CategoriesScreen extends StatefulWidget {
 class _CategoriesScreenState extends State<CategoriesScreen> {
   @override
   Widget build(BuildContext context) {
+    final Color primaryColor = Theme.of(context).primaryColor;
     final categoriesData = Provider.of<Categories>(context, listen: false);
     return Scaffold(
       floatingActionButton: FloatingActionButton(
-        backgroundColor: const Color.fromRGBO(90, 90, 243, 1),
+        backgroundColor: primaryColor,
         onPressed: () {
           setState(() {});
         },

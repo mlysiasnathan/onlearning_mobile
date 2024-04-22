@@ -28,9 +28,11 @@ class CategoryItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
+    final Color primaryColor = Theme.of(context).primaryColor;
     return InkWell(
       borderRadius: BorderRadius.circular(15),
-      splashColor: Colors.blue,
+      splashColor: primaryColor,
       onTap: () => selectCategory(context),
       child: Card(
         shape: RoundedRectangleBorder(
@@ -71,7 +73,7 @@ class CategoryItem extends StatelessWidget {
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(10),
                       color:
-                          const Color.fromRGBO(90, 90, 243, 0.7607843137254902),
+                      primaryColor,
                     ),
                     width: 300,
                     padding: const EdgeInsets.symmetric(
@@ -99,7 +101,7 @@ class CategoryItem extends StatelessWidget {
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(10),
                       color:
-                          const Color.fromRGBO(90, 90, 243, 0.7607843137254902),
+                      primaryColor,
                     ),
                     width: 300,
                     padding:
@@ -132,9 +134,9 @@ class CategoryItem extends StatelessWidget {
                           createdAt.toString(),
                         ),
                       )}',
-                      style: const TextStyle(
+                      style:  TextStyle(
                         fontSize: 12,
-                        color: Color.fromRGBO(90, 90, 243, 0.7607843137254902),
+                        color: primaryColor,
                         fontWeight: FontWeight.bold,
                       ),
                       softWrap: true,
