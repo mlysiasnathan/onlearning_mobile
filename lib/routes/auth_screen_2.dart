@@ -41,6 +41,7 @@ class _AuthScreen2State extends State<AuthScreen2> {
   var _isPhoneLoading = false;
   var _isFaceBookLoading = false;
   final _passwordController = TextEditingController();
+
   void _showErrorToast(String message) {
     ScaffoldMessenger.of(context).hideCurrentSnackBar();
     ScaffoldMessenger.of(context).showSnackBar(
@@ -85,7 +86,8 @@ class _AuthScreen2State extends State<AuthScreen2> {
   @override
   Widget build(BuildContext context) {
     final deviceSize = MediaQuery.of(context).size;
-    final Color primaryColor = Theme.of(context).primaryColor;
+    final ThemeData theme = Theme.of(context);
+
     final userData = Provider.of<Auth>(context, listen: false);
     Future<void> submit() async {
       if (!_formKey.currentState!.validate()) {
@@ -120,11 +122,7 @@ class _AuthScreen2State extends State<AuthScreen2> {
         decoration: BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.topCenter,
-            colors: [
-              primaryColor,
-              const Color.fromRGBO(41, 20, 106, 1.0),
-              const Color.fromRGBO(81, 37, 128, 1.0),
-            ],
+            colors: [theme.primaryColor, theme.primaryColorLight],
           ),
         ),
         child: Column(
@@ -144,7 +142,7 @@ class _AuthScreen2State extends State<AuthScreen2> {
                         Text(
                           demoData[_authMode.index]['title'],
                           style: TextStyle(
-                            color: Colors.white,
+                            color: theme.colorScheme.background,
                             fontSize: deviceSize.width * 0.09,
                             fontWeight: FontWeight.w900,
                           ),
@@ -153,7 +151,7 @@ class _AuthScreen2State extends State<AuthScreen2> {
                         Text(
                           demoData[_authMode.index]['desc'],
                           style: TextStyle(
-                            color: Colors.white,
+                            color: theme.colorScheme.background,
                             fontSize: deviceSize.width * 0.045,
                           ),
                         ),
@@ -171,7 +169,7 @@ class _AuthScreen2State extends State<AuthScreen2> {
                           : _authMode == AuthMode.signup
                               ? Icons.lock_open
                               : Icons.mark_email_read,
-                      color: Colors.white,
+                      color: theme.colorScheme.background,
                       size: deviceSize.width * 0.15,
                     ),
                   ),
@@ -185,16 +183,15 @@ class _AuthScreen2State extends State<AuthScreen2> {
                   vertical: 20,
                   horizontal: 20,
                 ),
-                decoration: const BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(60),
-                    topRight: Radius.circular(60),
+                decoration: BoxDecoration(
+                  color: theme.colorScheme.background,
+                  borderRadius: const BorderRadius.only(
+                    topLeft: Radius.circular(50),
+                    topRight: Radius.circular(50),
                   ),
                 ),
                 child: SingleChildScrollView(
                   child: Column(
-                    // crossAxisAlignment: CrossAxisAlignment.center,
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [
                       SizedBox(height: deviceSize.height * 0.1),
@@ -208,20 +205,11 @@ class _AuthScreen2State extends State<AuthScreen2> {
                                 key: const ValueKey('email'),
                                 initialValue: '@test.com',
                                 style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.red.shade900),
-                                decoration: InputDecoration(
-                                  fillColor: Colors.grey.shade200,
-                                  filled: true,
-                                  isDense: true,
-                                  prefixIcon: const Icon(Icons.email_outlined),
-                                  border: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(30),
-                                      borderSide: BorderSide.none),
-                                  hintStyle: Theme.of(context)
-                                      .textTheme
-                                      .bodyMedium!
-                                      .copyWith(color: Colors.grey),
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.red.shade900,
+                                ),
+                                decoration: const InputDecoration(
+                                  prefixIcon: Icon(Icons.email_outlined),
                                   hintText:
                                       'Enter your email for verification :',
                                 ),
@@ -244,20 +232,11 @@ class _AuthScreen2State extends State<AuthScreen2> {
                                 key: const ValueKey('names'),
                                 enabled: _authMode == AuthMode.signup,
                                 style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.red.shade900),
-                                decoration: InputDecoration(
-                                  fillColor: Colors.grey.shade200,
-                                  filled: true,
-                                  isDense: true,
-                                  prefixIcon: const Icon(Icons.person),
-                                  border: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(30),
-                                      borderSide: BorderSide.none),
-                                  hintStyle: Theme.of(context)
-                                      .textTheme
-                                      .bodyMedium!
-                                      .copyWith(color: Colors.grey),
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.red.shade900,
+                                ),
+                                decoration: const InputDecoration(
+                                  prefixIcon: Icon(Icons.person),
                                   hintText: 'Enter your names :',
                                 ),
                                 onFieldSubmitted: (_) {
@@ -284,20 +263,11 @@ class _AuthScreen2State extends State<AuthScreen2> {
                                 key: const ValueKey('mail'),
                                 initialValue: '@test.com',
                                 style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.red.shade900),
-                                decoration: InputDecoration(
-                                  fillColor: Colors.grey.shade200,
-                                  filled: true,
-                                  isDense: true,
-                                  prefixIcon: const Icon(Icons.email_outlined),
-                                  border: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(30),
-                                      borderSide: BorderSide.none),
-                                  hintStyle: Theme.of(context)
-                                      .textTheme
-                                      .bodyMedium!
-                                      .copyWith(color: Colors.grey),
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.red.shade900,
+                                ),
+                                decoration: const InputDecoration(
+                                  prefixIcon: Icon(Icons.email_outlined),
                                   hintText: 'Enter your email :',
                                 ),
                                 focusNode: _emailFocus,
@@ -339,18 +309,8 @@ class _AuthScreen2State extends State<AuthScreen2> {
                                 style: TextStyle(
                                     fontWeight: FontWeight.bold,
                                     color: Colors.red.shade900),
-                                decoration: InputDecoration(
-                                  fillColor: Colors.grey.shade200,
-                                  filled: true,
-                                  isDense: true,
-                                  prefixIcon: const Icon(Icons.lock_open),
-                                  border: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(30),
-                                      borderSide: BorderSide.none),
-                                  hintStyle: Theme.of(context)
-                                      .textTheme
-                                      .bodyMedium!
-                                      .copyWith(color: Colors.grey),
+                                decoration: const InputDecoration(
+                                  prefixIcon: Icon(Icons.lock_open),
                                   hintText: 'Confirm Password :',
                                 ),
                                 focusNode: _confirmPassword,
@@ -431,10 +391,6 @@ class _AuthScreen2State extends State<AuthScreen2> {
                                         setState(() {
                                           _isGoogleLoading = true;
                                         });
-                                        // await userData.signInWithGoogle();
-                                        // setState(() {
-                                        //   _isGoogleLoading = false;
-                                        // });
                                       },
                                       icon: const Icon(Icons.g_translate),
                                       label: const Text('Google'),
@@ -530,7 +486,8 @@ class _AuthScreen2State extends State<AuthScreen2> {
                                                         textAlign:
                                                             TextAlign.center,
                                                         style: TextStyle(
-                                                          color: primaryColor,
+                                                          color: theme
+                                                              .primaryColor,
                                                           fontSize: 25,
                                                         ),
                                                       ),
@@ -540,7 +497,8 @@ class _AuthScreen2State extends State<AuthScreen2> {
                                                         textAlign:
                                                             TextAlign.center,
                                                         style: TextStyle(
-                                                          color: primaryColor,
+                                                          color: theme
+                                                              .primaryColor,
                                                         ),
                                                       ),
                                                       SizedBox(
@@ -604,11 +562,6 @@ class _AuthScreen2State extends State<AuthScreen2> {
                                                           }
                                                           if (value.length !=
                                                               9) {
-                                                            // _showToast(
-                                                            //     message:
-                                                            //         'Consider your number without a 0 at the beginning',
-                                                            //     context:
-                                                            //         context);
                                                             return 'This is number is too loong or too short.';
                                                           }
                                                           return null;
@@ -650,188 +603,6 @@ class _AuthScreen2State extends State<AuthScreen2> {
                                                         .validate()) {
                                                       return;
                                                     }
-                                                    // await userData
-                                                    //     .phoneAuthentication(
-                                                    //         phoneNumber:
-                                                    //             _authData[
-                                                    //                     'phone']
-                                                    //                 .toString(),
-                                                    //         context: context)
-                                                    //     .then((_) =>
-                                                    //         Navigator.pop(ctx))
-                                                    //     .then(
-                                                    //         (_) => showDialog<
-                                                    //                 void>(
-                                                    //               context:
-                                                    //                   context,
-                                                    //               barrierDismissible:
-                                                    //                   false,
-                                                    //               builder: (ctx) =>
-                                                    //                   AlertDialog(
-                                                    //                 actionsAlignment:
-                                                    //                     MainAxisAlignment
-                                                    //                         .center,
-                                                    //                 elevation:
-                                                    //                     10,
-                                                    //                 contentPadding:
-                                                    //                     const EdgeInsets
-                                                    //                         .symmetric(
-                                                    //                   vertical:
-                                                    //                       10,
-                                                    //                   horizontal:
-                                                    //                       10,
-                                                    //                 ),
-                                                    //                 alignment:
-                                                    //                     Alignment
-                                                    //                         .center,
-                                                    //                 shape:
-                                                    //                     RoundedRectangleBorder(
-                                                    //                   borderRadius:
-                                                    //                       BorderRadius.circular(
-                                                    //                           20),
-                                                    //                 ),
-                                                    //                 title: Text(
-                                                    //                   'Verification code',
-                                                    //                   textAlign:
-                                                    //                       TextAlign
-                                                    //                           .center,
-                                                    //                   style:
-                                                    //                       TextStyle(
-                                                    //                     color:
-                                                    //                         primaryColor,
-                                                    //                   ),
-                                                    //                 ),
-                                                    //                 content:
-                                                    //                     SizedBox(
-                                                    //                   height:
-                                                    //                       deviceSize.height *
-                                                    //                           0.2,
-                                                    //                   width: deviceSize
-                                                    //                           .width *
-                                                    //                       0.7,
-                                                    //                   child:
-                                                    //                       SingleChildScrollView(
-                                                    //                     child:
-                                                    //                         Column(
-                                                    //                       crossAxisAlignment:
-                                                    //                           CrossAxisAlignment.stretch,
-                                                    //                       mainAxisAlignment:
-                                                    //                           MainAxisAlignment.start,
-                                                    //                       children: [
-                                                    //                         Center(
-                                                    //                           child: Text(
-                                                    //                             'Enter the OTP code',
-                                                    //                             style: TextStyle(
-                                                    //                               color: primaryColor,
-                                                    //                               fontWeight: FontWeight.w900,
-                                                    //                               // fontSize: 22,
-                                                    //                             ),
-                                                    //                           ),
-                                                    //                         ),
-                                                    //                         SizedBox(height: deviceSize.height * 0.06),
-                                                    //                         StatefulBuilder(
-                                                    //                           builder: (context, setModalState) {
-                                                    //                             return PinCodeTextField(
-                                                    //                               autoDisposeControllers: false,
-                                                    //                               appContext: context,
-                                                    //                               length: 6,
-                                                    //                               mainAxisAlignment: MainAxisAlignment.spaceAround,
-                                                    //                               enableActiveFill: false,
-                                                    //                               // autoFocus: true,
-                                                    //                               enablePinAutofill: false,
-                                                    //                               // errorTextSpace: 16.0,
-                                                    //                               showCursor: true,
-                                                    //                               cursorColor: primaryColor,
-                                                    //                               obscureText: false,
-                                                    //                               hintCharacter: '●',
-                                                    //                               keyboardType: TextInputType.number,
-                                                    //                               pinTheme: PinTheme(
-                                                    //                                 fieldHeight: 40.0,
-                                                    //                                 fieldWidth: 40.0,
-                                                    //                                 borderWidth: 3.0,
-                                                    //                                 borderRadius: BorderRadius.circular(10.0),
-                                                    //                                 shape: PinCodeFieldShape.box,
-                                                    //                                 activeColor: primaryColor,
-                                                    //                                 inactiveColor: primaryColor.withOpacity(0.4),
-                                                    //                                 selectedColor: primaryColor,
-                                                    //                                 activeFillColor: primaryColor,
-                                                    //                                 inactiveFillColor: primaryColor,
-                                                    //                                 selectedFillColor: primaryColor,
-                                                    //                               ),
-                                                    //                               onSubmitted: (value) {
-                                                    //                                 setModalState(() {
-                                                    //                                   _authData['otp'] = value.trim();
-                                                    //                                   showToast(message: 'Verify', context: context);
-                                                    //                                 });
-                                                    //                               },
-                                                    //                               onChanged: (value) {
-                                                    //                                 _authData['otp'] = value.trim();
-                                                    //                               },
-                                                    //                               autovalidateMode: AutovalidateMode.onUserInteraction,
-                                                    //                               validator: (value) {
-                                                    //                                 if (value!.isEmpty || value == '') {
-                                                    //                                   return 'Fill in with your PIN code';
-                                                    //                                 }
-                                                    //                                 return null;
-                                                    //                               },
-                                                    //                             );
-                                                    //                           },
-                                                    //                         ),
-                                                    //                       ],
-                                                    //                     ),
-                                                    //                   ),
-                                                    //                 ),
-                                                    //                 actions: [
-                                                    //                   StatefulBuilder(
-                                                    //                     builder:
-                                                    //                         (context,
-                                                    //                             setModalState) {
-                                                    //                       return Row(
-                                                    //                         mainAxisAlignment:
-                                                    //                             MainAxisAlignment.center,
-                                                    //                         children: [
-                                                    //                           OutlinedButton.icon(
-                                                    //                             icon: Icon(Icons.close, color: _isLoading ? Colors.grey : Colors.red.shade900),
-                                                    //                             onPressed: _isLoading
-                                                    //                                 ? null
-                                                    //                                 : () {
-                                                    //                                     Navigator.pop(ctx);
-                                                    //                                   },
-                                                    //                             label: Text(
-                                                    //                               'Cancel',
-                                                    //                               style: TextStyle(
-                                                    //                                 fontSize: 17,
-                                                    //                                 color: _isLoading ? Colors.grey : Colors.red.shade900,
-                                                    //                               ),
-                                                    //                             ),
-                                                    //                           ),
-                                                    //                           const SizedBox(width: 10),
-                                                    //                           _isLoading
-                                                    //                               ? const CircularProgressIndicator()
-                                                    //                               : ElevatedButton.icon(
-                                                    //                                   icon: const Icon(Icons.check),
-                                                    //                                   onPressed: () async {
-                                                    //                                     await userData.verifyOTP(otp: _authData['otp'].toString(), phoneNumber: _authData['phone'].toString()).then((_) => Navigator.pop(ctx));
-                                                    //                                     setModalState(() {
-                                                    //                                       _isLoading = true;
-                                                    //                                     });
-                                                    //                                   },
-                                                    //                                   label: const Text(
-                                                    //                                     'Proceed',
-                                                    //                                     style: TextStyle(
-                                                    //                                       fontSize: 17,
-                                                    //                                     ),
-                                                    //                                   ),
-                                                    //                                 ),
-                                                    //                         ],
-                                                    //                       );
-                                                    //                     },
-                                                    //                   )
-                                                    //                 ],
-                                                    //               ),
-                                                    //             ));
-
-                                                    // _isPhoneLoading = false;
                                                   },
                                                   label: const Text(
                                                     'Get the code',
@@ -930,19 +701,8 @@ class _PasswordFieldState extends State<PasswordField> {
       key: const ValueKey('password'),
       style: TextStyle(fontWeight: FontWeight.bold, color: Colors.red.shade900),
       decoration: InputDecoration(
-        // labelText: 'Password',
-        fillColor: Colors.grey.shade200,
-        filled: true,
-        isDense: true,
-        hintStyle: Theme.of(context)
-            .textTheme
-            .bodyMedium!
-            .copyWith(color: Colors.grey),
         hintText: 'Enter your Password :',
         prefixIcon: const Icon(Icons.lock_open),
-        border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(30),
-            borderSide: BorderSide.none),
         suffixIcon: IconButton(
           onPressed: () {
             setState(() {

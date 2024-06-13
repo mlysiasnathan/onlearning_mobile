@@ -7,37 +7,37 @@ class SplashScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final Color primaryColor = Theme.of(context).primaryColor;
+    final ThemeData theme = Theme.of(context);
     final mediaQuery = MediaQuery.of(context).size;
     return Scaffold(
       body: Container(
-        color: primaryColor,
+        color: theme.primaryColor,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            const SizedBox(),
+            const SizedBox(height: 50),
             Container(
               padding:
                   const EdgeInsets.symmetric(vertical: 18.0, horizontal: 70.0),
               transform: Matrix4.rotationZ(-8 * pi / 180)..translate(-0.0),
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(20),
-                color: Colors.white,
-                boxShadow: const [
+                color: theme.colorScheme.background,
+                boxShadow: [
                   BoxShadow(
                     blurRadius: 8,
-                    color: Colors.black26,
-                    offset: Offset(0, 2),
+                    color: theme.colorScheme.shadow,
+                    offset: const Offset(0, 2),
                   )
                 ],
               ),
-              child:  Text(
+              child: Text(
                 'Onlearning',
                 style: TextStyle(
                   fontSize: 30,
-                  color: primaryColor,
-                  fontWeight: FontWeight.w800,
+                  color: theme.primaryColor,
+                  fontWeight: FontWeight.w900,
                 ),
               ),
             ),
@@ -45,7 +45,7 @@ class SplashScreen extends StatelessWidget {
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(20),
               ),
-              elevation: 19,
+              elevation: 25,
               color: Colors.transparent,
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(20),
@@ -57,11 +57,31 @@ class SplashScreen extends StatelessWidget {
                 ),
               ),
             ),
-            LinearProgressIndicator(
-              color: primaryColor,
-              borderRadius: BorderRadius.circular(30),
+            Column(
+              children: [
+                Text(
+                  'From',
+                  style: TextStyle(
+                    fontWeight: FontWeight.w900,
+                    color: theme.colorScheme.background,
+                    fontSize: 12,
+                    letterSpacing: 4.0,
+                  ),
+                ),
+                Image.asset(
+                  'assets/images/lysnB_land_logo_png.png',
+                  width: mediaQuery.width * 0.3,
+                  fit: BoxFit.fitWidth,
+                ),
+                const SizedBox(height: 10),
+                LinearProgressIndicator(
+                  backgroundColor: theme.primaryColor,
+                  color: theme.colorScheme.background,
+                  borderRadius: BorderRadius.circular(30),
+                ),
+                const SizedBox(height: 20),
+              ],
             ),
-            // const Center(child: CircularProgressIndicator(color: Colors.white)),
           ],
         ),
       ),

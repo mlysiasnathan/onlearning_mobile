@@ -17,11 +17,27 @@ class CategoriesScreen extends StatefulWidget {
 class _CategoriesScreenState extends State<CategoriesScreen> {
   @override
   Widget build(BuildContext context) {
-    final Color primaryColor = Theme.of(context).primaryColor;
+    final ThemeData theme = Theme.of(context);
     final categoriesData = Provider.of<Categories>(context, listen: false);
     return Scaffold(
+      appBar: AppBar(
+        title: const Text('Categories'),
+        leading: Card(
+          elevation: 15,
+          child: Padding(
+            padding: const EdgeInsets.all(4.0),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(6),
+              child: Image.asset(
+                'assets/images/onlearning_logo.jpg',
+                fit: BoxFit.cover,
+              ),
+            ),
+          ),
+        ),
+      ),
       floatingActionButton: FloatingActionButton(
-        backgroundColor: primaryColor,
+        backgroundColor: theme.primaryColor,
         onPressed: () {
           setState(() {});
         },
@@ -31,9 +47,6 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
       endDrawer: const CustomDrawer(),
       body: CustomScrollView(
         slivers: <Widget>[
-          const CustomAppBar(
-            title: 'Categories',
-          ),
           FutureBuilder(
             future: categoriesData.getAllCategories(),
             builder: (context, dataSnapshot) {

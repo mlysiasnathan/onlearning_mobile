@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
-import 'auth_screen_2.dart';
+import '../providers/auth_provider.dart';
 
 class OnBoardingScreen extends StatefulWidget {
   const OnBoardingScreen({super.key});
@@ -10,30 +11,22 @@ class OnBoardingScreen extends StatefulWidget {
 }
 
 class _OnBoardingScreenState extends State<OnBoardingScreen> {
-  @override
-  void dispose() {
-    _controller.dispose();
-    // TODO: implement dispose
-    super.dispose();
-  }
-
   int _currentPage = 0;
   final PageController _controller = PageController();
   final List<Map<String, dynamic>> demoData = [
     {
-      'image': 'assets/images/onboarding/undraw_time_management_re_tk5w.svg',
+      'image': 'assets/images/onlearning_logo.jpg',
       'title': 'Fast and no time consuming as mobile wallet',
       'desc': 'Sending money as faster as possible is now possible'
     },
     {
-      'image':
-          'assets/images/onboarding/undraw_credit_card_payments_re_qboh.svg',
+      'image': 'assets/images/onlearning_logo.jpg',
       'title': 'Get your physical card',
       'desc':
           'For more easiness to pay your bill in the usual expense you can request a physical credit card'
     },
     {
-      'image': 'assets/images/onboarding/undraw_happy_news_re_tsbd.svg',
+      'image': 'assets/images/onlearning_logo.jpg',
       'title': 'Let \'s go now',
       'desc': 'Are you ready ?'
     },
@@ -42,12 +35,10 @@ class _OnBoardingScreenState extends State<OnBoardingScreen> {
   @override
   Widget build(BuildContext context) {
     void getStarted() {
-      Navigator.pushReplacementNamed(context, AuthScreen2.routeName);
-      // Provider.of<UsersProvider>(context, listen: false).isInit = true;
-      // Provider.of<UsersProvider>(context, listen: false).notifyListeners();
+      Provider.of<Auth>(context, listen: false).initOnBoardingPage();
     }
 
-    final Color primaryColor = Theme.of(context).primaryColor;
+    final ThemeData theme = Theme.of(context);
     final deviceSize = MediaQuery.of(context).size;
     return Scaffold(
       body: SafeArea(
@@ -62,10 +53,6 @@ class _OnBoardingScreenState extends State<OnBoardingScreen> {
                 itemBuilder: (context, index) => Column(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
-                    // AspectRatio(
-                    //   aspectRatio: 1,
-                    //   child: SvgPicture.asset(demoData[index]['image']),
-                    // ),
                     AspectRatio(
                       aspectRatio: 1,
                       child: Image.asset(demoData[index]['image']),
@@ -73,7 +60,7 @@ class _OnBoardingScreenState extends State<OnBoardingScreen> {
                     Text(
                       demoData[index]['title'],
                       style: TextStyle(
-                        color: primaryColor,
+                        color: theme.primaryColor,
                         fontSize: deviceSize.width * 0.07,
                         fontWeight: FontWeight.w900,
                         overflow: TextOverflow.ellipsis,
@@ -84,7 +71,7 @@ class _OnBoardingScreenState extends State<OnBoardingScreen> {
                     Text(
                       demoData[index]['desc'],
                       style: TextStyle(
-                        color: primaryColor.withOpacity(0.7),
+                        color: theme.primaryColor.withOpacity(0.7),
                         fontSize: deviceSize.width * 0.045,
                         overflow: TextOverflow.ellipsis,
                       ),
@@ -112,7 +99,7 @@ class _OnBoardingScreenState extends State<OnBoardingScreen> {
                             child: Text(
                               'Skip',
                               style: TextStyle(
-                                color: primaryColor,
+                                color: theme.primaryColor,
                                 fontWeight: FontWeight.w900,
                               ),
                               textAlign: TextAlign.center,
@@ -130,8 +117,8 @@ class _OnBoardingScreenState extends State<OnBoardingScreen> {
                         margin: const EdgeInsets.symmetric(horizontal: 3),
                         decoration: BoxDecoration(
                           color: _currentPage == index
-                              ? primaryColor
-                              : primaryColor.withOpacity(0.3),
+                              ? theme.primaryColor
+                              : theme.primaryColor.withOpacity(0.3),
                           borderRadius: BorderRadius.circular(12),
                         ),
                       ),
@@ -145,8 +132,9 @@ class _OnBoardingScreenState extends State<OnBoardingScreen> {
                             child: Text(
                               'GET STARTED',
                               style: TextStyle(
-                                color: primaryColor,
+                                color: theme.primaryColor,
                                 fontWeight: FontWeight.w900,
+                                fontSize: 10,
                               ),
                               textAlign: TextAlign.center,
                             ),
@@ -158,7 +146,7 @@ class _OnBoardingScreenState extends State<OnBoardingScreen> {
                             child: Text(
                               'Next',
                               style: TextStyle(
-                                color: primaryColor,
+                                color: theme.primaryColor,
                                 fontWeight: FontWeight.w900,
                               ),
                               textAlign: TextAlign.center,

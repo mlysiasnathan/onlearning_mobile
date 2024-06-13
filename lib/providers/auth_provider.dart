@@ -18,6 +18,7 @@ class Auth with ChangeNotifier {
     image: 'assets/images/unknown.png',
   );
   String? _token;
+  bool appInitialized = false;
 
   bool get isAuth {
     return token != null;
@@ -171,8 +172,32 @@ class Auth with ChangeNotifier {
   Future<void> logout() async {
     _token = null;
     SharedPreferences pref = await SharedPreferences.getInstance();
-    // await pref.remove('userData');
-    await pref.clear();
+    await pref.remove('userData');
+    // await pref.clear();
     notifyListeners();
+  }
+
+  void changeIpAddress({required newIpAddress}) {
+    ipLocalAddress = newIpAddress;
+    print(ipLocalAddress);
+    print(baseURL);
+    notifyListeners();
+  }
+
+  Future<void> initOnBoardingPage() async {
+    appInitialized = true;
+    final prefs = await SharedPreferences.getInstance();
+    prefs.setBool('isInit', appInitialized);
+    notifyListeners();
+  }
+
+  Future<bool> showOnBoardingPage() async {
+    final prefs = await SharedPreferences.getInstance();
+    if (!prefs.containsKey('isInit')) {
+      return false;
+    }
+    appInitialized = prefs.getBool('isInit') ?? false;
+    // notifyListeners();
+    return appInitialized;
   }
 }
