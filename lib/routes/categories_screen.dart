@@ -29,7 +29,7 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
             child: ClipRRect(
               borderRadius: BorderRadius.circular(6),
               child: Image.asset(
-                'assets/images/onlearning_logo.jpg',
+                assetImages[1],
                 fit: BoxFit.cover,
               ),
             ),

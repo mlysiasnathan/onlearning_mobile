@@ -54,8 +54,8 @@ class CategoryItem extends StatelessWidget {
                       height: 250,
                       width: double.infinity,
                       fit: BoxFit.cover,
-                      placeholder: const AssetImage(
-                        'assets/images/placeholder.PNG',
+                      placeholder: AssetImage(
+                          assetImages[3],
                       ),
                       image:
                           // precacheImage(

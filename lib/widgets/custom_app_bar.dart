@@ -45,7 +45,7 @@ class CustomAppBar extends StatelessWidget {
         ),
         background: image == null
             ? Image.asset(
-                'assets/images/line.jpg',
+                assetImages[5],
                 fit: BoxFit.cover,
               )
             : Hero(
@@ -54,8 +54,8 @@ class CustomAppBar extends StatelessWidget {
                   fadeInDuration: const Duration(seconds: 1),
                   fadeOutDuration: const Duration(seconds: 1),
                   fit: BoxFit.cover,
-                  placeholder: const AssetImage(
-                    'assets/images/placeholder.PNG',
+                  placeholder: AssetImage(
+                    assetImages[3],
                   ),
                   image: NetworkImage(
                     '$assetsURL/storage/$image',
@@ -68,7 +68,7 @@ class CustomAppBar extends StatelessWidget {
         child: ClipRRect(
           borderRadius: BorderRadius.circular(6),
           child: Image.asset(
-            'assets/images/onlearning_logo.jpg',
+              assetImages[1],
             fit: BoxFit.cover,
           ),
         ),

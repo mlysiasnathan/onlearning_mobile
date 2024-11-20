@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../helpers/constants.dart';
 import '../providers/auth_provider.dart';
 
 class OnBoardingScreen extends StatefulWidget {
@@ -15,18 +16,17 @@ class _OnBoardingScreenState extends State<OnBoardingScreen> {
   final PageController _controller = PageController();
   final List<Map<String, dynamic>> demoData = [
     {
-      'image': 'assets/images/onlearning_logo.jpg',
-      'title': 'Fast and no time consuming as mobile wallet',
-      'desc': 'Sending money as faster as possible is now possible'
+      'image': assetImages[0],
+      'title': 'Fast and no time consuming as mobile teacher',
+      'desc': 'Sometime is hard to take courses from youtube'
     },
     {
-      'image': 'assets/images/onlearning_logo.jpg',
-      'title': 'Get your physical card',
-      'desc':
-          'For more easiness to pay your bill in the usual expense you can request a physical credit card'
+      'image': assetImages[2],
+      'title': 'Get your free certifications now',
+      'desc':'Learn for free and get your certifications as soon as you finish'
     },
     {
-      'image': 'assets/images/onlearning_logo.jpg',
+      'image': assetImages[1],
       'title': 'Let \'s go now',
       'desc': 'Are you ready ?'
     },

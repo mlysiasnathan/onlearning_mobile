@@ -1,9 +1,9 @@
-import 'package:app/routes/auth_screen_2.dart';
-import 'package:app/routes/on_boarding_screen.dart';
-import 'package:app/routes/proxy_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import './routes/auth_screen_2.dart';
+import './routes/on_boarding_screen.dart';
+import './routes/proxy_screen.dart';
 import './routes/screens.dart';
 import './providers/providers.dart';
 import 'helpers/helpers.dart';

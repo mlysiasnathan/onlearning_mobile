@@ -2,6 +2,8 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 
+import '../helpers/constants.dart';
+
 class SplashScreen extends StatelessWidget {
   const SplashScreen({Key? key}) : super(key: key);
 
@@ -50,7 +52,7 @@ class SplashScreen extends StatelessWidget {
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(20),
                 child: Image.asset(
-                  'assets/images/onlearning_logo.jpg',
+                  assetImages[1],
                   width: mediaQuery.height * 0.20,
                   height: mediaQuery.height * 0.20,
                   fit: BoxFit.cover,
@@ -69,7 +71,7 @@ class SplashScreen extends StatelessWidget {
                   ),
                 ),
                 Image.asset(
-                  'assets/images/lysnB_land_logo_png.png',
+                  assetImages[0],
                   width: mediaQuery.width * 0.3,
                   fit: BoxFit.fitWidth,
                 ),

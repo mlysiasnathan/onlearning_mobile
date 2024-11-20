@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../helpers/constants.dart';
+
 class VideoItem extends StatefulWidget {
   const VideoItem({Key? key, required this.vidName, required this.vidFile})
       : super(key: key);
@@ -56,7 +58,7 @@ class _VideoItemState extends State<VideoItem> {
                   ClipRRect(
                     borderRadius: BorderRadius.circular(15),
                     child: Image.asset(
-                      'assets/images/line.jpg',
+                      assetImages[5],
                       height: 200,
                       width: 450,
                       fit: BoxFit.cover,
