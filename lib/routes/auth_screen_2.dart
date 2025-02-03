@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../helpers/constants.dart';
 import '../models/http_exceptions.dart';
 import '../providers/auth_provider.dart';
 
@@ -470,7 +471,7 @@ class _AuthScreen2State extends State<AuthScreen2> {
                                                                   .height *
                                                               0.04),
                                                       Image.asset(
-                                                        'assets/images/others/walletis_logo_png.png',
+                                                        assetImages[1],
                                                         width:
                                                             deviceSize.height *
                                                                 0.06,
@@ -493,7 +494,7 @@ class _AuthScreen2State extends State<AuthScreen2> {
                                                       ),
                                                       const SizedBox(height: 5),
                                                       Text(
-                                                        'to continue to Walletis',
+                                                        'to continue to Onlearning',
                                                         textAlign:
                                                             TextAlign.center,
                                                         style: TextStyle(

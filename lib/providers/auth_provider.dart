@@ -187,7 +187,7 @@ class Auth with ChangeNotifier {
   Future<void> initOnBoardingPage() async {
     appInitialized = true;
     final prefs = await SharedPreferences.getInstance();
-    prefs.setBool('isInit', appInitialized);
+    // prefs.setBool('isInit', appInitialized);
     notifyListeners();
   }
 
