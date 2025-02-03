@@ -6,7 +6,7 @@ import './routes/on_boarding_screen.dart';
 import './routes/proxy_screen.dart';
 import './routes/screens.dart';
 import './providers/providers.dart';
-import 'helpers/helpers.dart';
+import './helpers/helpers.dart';
 
 void main() {
   runApp(
