@@ -1,4 +1,4 @@
-library walletis_helpers;
+library onlearning_helpers;
 
 export './constants.dart';
 export './theme.dart';
