@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 ThemeData lightMode = ThemeData(
   fontFamily: 'Comfortaa',
   brightness: Brightness.light,
-  primaryColor: const Color.fromRGBO(90, 90, 243, 1),
+  primaryColor: const Color.fromRGBO(90, 90, 243, 1.0),
   primaryColorLight: const Color.fromRGBO(144, 133, 232, 1.0),
   primaryColorDark: const Color.fromRGBO(64, 55, 133, 1.0),
   colorScheme: const ColorScheme.light(
